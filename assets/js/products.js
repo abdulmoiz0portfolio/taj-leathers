@@ -37,7 +37,7 @@ const LEATHER_PRODUCTS = [
     details: ["Smooth genuine leather exterior", "Multiple card slots + note compartments", "Hand-stitched edges", "Classic slim bifold profile"] },
   { id: "wallet-twotone", name: "Heritage Two-Tone Bifold", cat: "wallets",
     price: 1600, oldPrice: 2000, img: "light/taj-wallet5-twotone-light.webp",
-    gallery: ["light/taj-wallet5-twotone-light.webp","light/p5-30059-light.webp","light/p5-30058-light.webp","light/p5-30100-light.webp","light/p5-30101-light.webp"],
+    gallery: ["light/taj-wallet5-twotone-light.webp","light/p5-30059-light.webp","light/p5-30058-light.webp","light/p5-30101-light.webp"],
     colors: ["Black", "Dark Brown"], sizes: ["Standard"],
     badge: "-20%",
     desc: "Black meets dark brown pebbled leather — a two-tone bifold with real character. The grain does the talking; the stitching keeps it together for years.",
