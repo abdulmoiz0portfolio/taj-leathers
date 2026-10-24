@@ -24,7 +24,7 @@ const LEATHER_PRODUCTS = [
     details: ["Smooth genuine cowhide leather", "Classic matte finish buckle", "Hand-stitched keeper loop", "Width: 35mm"] },
   { id: "belt-lemination", name: "Lemination Belt", cat: "belts",
     price: 1100, oldPrice: 1400, img: "light/p6-belt-27-v2.webp",
-    gallery: ["light/p6-belt-27-v2.webp","light/p6-belt-22-v2.webp","light/p6-belt-28-v2.webp","light/p6-belt-23-v2.webp","light/p6-belt-29-v2.webp"],
+    gallery: ["light/p6-belt-27-v2.webp","light/p6-belt-22-v2.webp"],
     colors: ["Brown", "Black"], sizes: ["30", "32", "34", "36", "38", "40"],
     colorImages: { "Brown": "light/p6-belt-27-v2.webp", "Black": "light/p6-belt-22-v2.webp" },
     badge: "-21%",
