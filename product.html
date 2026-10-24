@@ -136,7 +136,7 @@ function paint() {
       </div>
       <div class="border-t border-black/10">
         ${acc("Details & Materials", "<ul class='list-disc pl-5 space-y-1.5'>" + p.details.map(d => `<li>${d}</li>`).join("") + "</ul>")}
-        ${acc("Shipping & Delivery", "Dispatched within 24 hours from Lahore. Delivery in 2–4 working days nationwide. <strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ", otherwise Rs 199 flat.")}
+        ${acc("Shipping & Delivery", "<strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ". On orders below " + fmt(FREE_SHIP_THRESHOLD) + ", delivery charges are Rs 200 in Karachi. If your order is not delivered in Karachi within 48 hours, delivery is FREE.")}
         ${false
           ? acc("Easy Exchange", "Unstitched cutting not quite right? Exchange it within 7 days — unused and in original condition. We want you to love what your tailor makes.")
           : acc("Lifetime Warranty", "If the stitching, buckle or hardware ever fails under normal use, we repair or replace it free — for life. 7-day easy exchange for unused items.")}

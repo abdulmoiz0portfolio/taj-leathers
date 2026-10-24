@@ -3,7 +3,7 @@ const BRAND = "TAJ LEATHERS";
 const WA_NUMBER = "923148253657"; // Moiz's real WhatsApp number (2026-10-19)
 const RELAY_URL = ""; // e.g. "https://taj-order-relay.onrender.com" — leave "" to disable auto-forward
 const ORDER_API_URL = ""; // disabled 2026-10-19: VPS tunnel dead; WhatsApp is the order channel. Re-enable with a stable API URL when the backend is live.
-const SHIP_FLAT = 250;
+const SHIP_FLAT = 200;
 
 /* ---------- promos ---------- */
 const PROMOS = {
