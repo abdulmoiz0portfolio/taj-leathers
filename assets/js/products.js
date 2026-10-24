@@ -3,8 +3,9 @@ const LEATHER_PRODUCTS = [
   // ---- BELTS ----
   { id: "belt-mailed", name: "Mailed Belt", cat: "belts",
     price: 1600, oldPrice: 2000, img: "light/p6-belt-18-v2.webp",
-    gallery: ["light/p6-belt-18-v2.webp","light/p6-belt-19-v2.webp","light/p6-belt-20-v2.webp","light/p6-belt-21-v2.webp"],
-    colors: ["Jet Black", "Espresso"], sizes: ["30", "32", "34", "36", "38", "40"],
+    gallery: ["light/p6-belt-18-v2.webp","light/p6-belt-22-v2.webp","light/p6-belt-19-v2.webp","light/p6-belt-23-v2.webp"],
+    colors: ["Brown", "Black"], sizes: ["30", "32", "34", "36", "38", "40"],
+    colorImages: { "Brown": "light/p6-belt-18-v2.webp", "Black": "light/p6-belt-22-v2.webp" },
     badge: "-20%",
     desc: "Premium milled grain leather belt crafted for daily durability and understated elegance. Finished by hand with a solid buckle.",
     details: ["100% genuine milled leather", "Solid alloy buckle, nickel-free", "Hand-burnished edges", "Width: 35mm"] },

@@ -80,6 +80,7 @@ document.querySelector('a[href="category.html"]').href = "category.html?section=
 renderChrome(p.section + "-home");
 
 let selColor = p.colors[0], selSize = p.sizes[0], qty = 1;
+let activeImg = (p.colorImages && p.colorImages[selColor]) || p.img;
 
 function optBtn(list, sel, fn) {
   return list.map(v => `<button onclick="${fn}('${v}')" class="px-4 py-2 rounded-full text-sm border transition ${v === sel ? "bg-[#D4AF37] text-white border-[#D4AF37] font-semibold" : "border-black/20 text-[#262626] hover:border-[#D4AF37]"}">${v}</button>`).join("");
@@ -93,9 +94,9 @@ function acc(title, body) {
 function paint() {
   document.getElementById("product-wrap").innerHTML = `
     <div class="relative rounded-3xl overflow-hidden bg-[#fafafa] border border-black/5">
-      <img id="p-main-img" src="assets/img/${p.img}" alt="${p.name}" class="w-full aspect-square object-cover">
-      ${(p.gallery||[]).length > 1 ? `<div class="flex gap-2 mt-3">` + p.gallery.map((g,i) =>
-        `<img src="assets/img/${g}" data-i="${i}" class="gal-thumb w-16 h-16 object-cover rounded-lg cursor-pointer ring-2 ${i===0?'ring-[#D4AF37]':'ring-transparent'} hover:ring-[#D4AF37] transition">`
+      <img id="p-main-img" src="assets/img/${activeImg}" alt="${p.name}" class="w-full aspect-square object-cover">
+      ${(p.gallery||[]).length > 1 ? `<div class="flex gap-2 mt-3 overflow-x-auto pb-1">` + p.gallery.map((g,i) =>
+        `<img src="assets/img/${g}" onclick="switchMainImg('${g}')" class="gal-thumb w-16 h-16 object-cover rounded-lg cursor-pointer ring-2 ${g===activeImg?'ring-[#D4AF37]':'ring-transparent'} hover:ring-[#D4AF37] transition shrink-0">`
       ).join("") + `</div>` : ""}
       <span class="absolute top-4 left-4 bg-red-700 text-[#000000] text-sm font-bold px-3 py-1.5 rounded-full">${p.badge} OFF</span>
     </div>
@@ -143,7 +144,22 @@ function paint() {
       </div>
     </div>`;
 }
-function setColor(v) { selColor = v; paint(); }
+function switchMainImg(src) {
+  activeImg = src;
+  if (p.colorImages) {
+    for (const [col, colImg] of Object.entries(p.colorImages)) {
+      if (colImg === src) { selColor = col; break; }
+    }
+  }
+  paint();
+}
+function setColor(v) {
+  selColor = v;
+  if (p.colorImages && p.colorImages[v]) {
+    activeImg = p.colorImages[v];
+  }
+  paint();
+}
 function setSize(v) { selSize = v; paint(); }
 function chQty(d) { qty = Math.max(1, Math.min(9, qty + d)); paint(); }
 function doAdd() {
@@ -194,11 +210,6 @@ document.getElementById("related").innerHTML =
   PRODUCTS.filter(x => x.section === p.section && x.cat === p.cat && x.id !== p.id).slice(0, 4)
     .map(productCard).join("");
 
-    document.querySelectorAll('.gal-thumb').forEach(t => t.addEventListener('click', () => {
-      document.getElementById('p-main-img').src = t.src;
-      document.querySelectorAll('.gal-thumb').forEach(x => { x.classList.remove('ring-[#D4AF37]'); x.classList.add('ring-transparent'); });
-      t.classList.remove('ring-transparent'); t.classList.add('ring-[#D4AF37]');
-    }));
 </script>
 </body>
 </html>
