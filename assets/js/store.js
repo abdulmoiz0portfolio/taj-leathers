@@ -304,8 +304,7 @@ function renderChrome(active = "") {
           <p class="text-[#000000] font-semibold mb-4 text-sm uppercase tracking-widest">Contact</p>
           <div class="flex flex-col gap-2 text-sm text-[#525252]">
             <a href="https://wa.me/${WA_NUMBER}" target="_blank" rel="noopener" class="hover:text-[#D4AF37]">WhatsApp: +92 314 8253657</a>
-            <span>hello@tajleathers.pk</span>
-            <span>Lahore, Pakistan</span>
+            <span>Karachi, Pakistan</span>
           </div>
         </div>
       </div>
