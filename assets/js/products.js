@@ -16,9 +16,9 @@ const LEATHER_PRODUCTS = [
     desc: "Distinctive textured crocodile emboss on full-grain leather hide. A statement dress belt for formal wear and crisp tailoring.",
     details: ["Full-grain embossed leather", "Polished silver-tone buckle", "Double-stitched keeper loop", "Width: 35mm"] },
   { id: "belt-plain", name: "Plain Belt", cat: "belts",
-    price: 1300, oldPrice: 1650, img: "light/p6-belt-01-v2.webp",
-    gallery: ["light/p6-belt-01-v2.webp","light/p6-belt-02-v2.webp","light/p6-belt-03-v2.webp","light/p6-belt-04-v2.webp"],
-    colors: ["Jet Black", "Tan Brown"], sizes: ["30", "32", "34", "36", "38", "40"],
+    price: 1300, oldPrice: 1650, img: "light/p6-belt-07-v2.webp",
+    gallery: ["light/p6-belt-07-v2.webp"],
+    colors: ["Jet Black"], sizes: ["30", "32", "34", "36", "38", "40"],
     badge: "-21%",
     desc: "Clean, timeless smooth finish plain leather belt. A versatile daily essential that pairs seamlessly with trousers or denim.",
     details: ["Smooth genuine cowhide leather", "Classic matte finish buckle", "Hand-stitched keeper loop", "Width: 35mm"] },
@@ -75,7 +75,7 @@ LEATHER_PRODUCTS.forEach(p => p.section = "leathers");
 const PRODUCTS = [...LEATHER_PRODUCTS];
 
 const LEATHER_CATS = {
-  belts:   { name: "Belts",        tag: "Cut to last a lifetime", img: "light/p6-belt-01-v2.webp" },
+  belts:   { name: "Belts",        tag: "Cut to last a lifetime", img: "light/p6-belt-07-v2.webp" },
   wallets: { name: "Wallets",      tag: "Carry less, keep more",  img: "light/taj-wallet-1-closed-light.webp" },
 };
 const CATS = { ...LEATHER_CATS };
