@@ -391,7 +391,7 @@ function openWhatsAppOrder(id, color, size, qty) {
             <label class="text-xs font-semibold text-[#262626] uppercase tracking-wider">Promo code <span class="text-[#737373] font-normal">(optional)</span></label>
             <div class="mt-1 flex gap-2">
               <input id="wa-f-promo" type="text" placeholder="e.g. WELCOME10" class="flex-1 min-w-0 border border-black/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#25D366]">
-              <button onclick="waApplyPromo()" class="bg-[#000000] text-black text-sm font-semibold px-5 rounded-xl hover:bg-[#D4AF37] transition whitespace-nowrap">Apply</button>
+              <button onclick="waApplyPromo()" class="bg-[#D4AF37] text-black text-sm font-semibold px-5 rounded-xl hover:bg-[#B8860B] transition whitespace-nowrap">Apply</button>
             </div>
             <p id="wa-promo-ok" class="hidden text-xs text-green-600 mt-1.5 font-medium">Code noted — mention it in chat and we will apply your discount manually.</p>
             <p id="wa-promo-bad" class="hidden text-xs text-red-600 mt-1.5">That code is not valid.</p>
@@ -405,6 +405,12 @@ function openWhatsAppOrder(id, color, size, qty) {
             </div>
           </div>
           <p id="wa-f-err" class="hidden text-xs text-red-600">Please fill name, a valid phone number (10–12 digits), city/area and full address.</p>
+          <div class="bg-[#fafafa] rounded-2xl p-4 space-y-1.5 text-sm">
+            <div class="flex justify-between"><span class="text-[#525252]">Subtotal</span><span id="wa-sum-sub" class="font-semibold text-[#000000]"></span></div>
+            <div class="flex justify-between"><span class="text-[#525252]">Delivery</span><span id="wa-sum-ship" class="font-semibold"></span></div>
+            <p id="wa-ship-note" class="text-xs"></p>
+            <div class="flex justify-between border-t border-black/10 pt-2"><span class="font-bold text-[#000000]">Total</span><span id="wa-sum-total" class="font-bold text-[#000000]"></span></div>
+          </div>
           <button onclick="submitWhatsAppOrder()" class="w-full bg-[#25D366] hover:bg-[#1fb857] text-white font-bold py-3.5 rounded-full transition flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.5 14.4c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.3-1.04 1.02-1.04 2.5 0 1.47 1.07 2.9 1.22 3.1.15.2 2.1 3.2 5.1 4.49.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.09 1.76-.72 2.01-1.42.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35M12.05 21.79h-.01a9.87 9.87 0 01-5.03-1.38l-.36-.21-3.74.98 1-3.65-.24-.37a9.86 9.86 0 01-1.51-5.26c0-5.45 4.44-9.88 9.9-9.88a9.82 9.82 0 019.88 9.89c0 5.45-4.44 9.88-9.89 9.88M20.5 3.49A11.8 11.8 0 0012.05 0C5.5 0 .16 5.34.16 11.9c0 2.1.55 4.14 1.59 5.95L.06 24l6.3-1.65a11.9 11.9 0 005.68 1.45h.01c6.55 0 11.89-5.34 11.89-11.9 0-3.18-1.24-6.16-3.44-8.41"/></svg>
             Send Order via WhatsApp
@@ -414,6 +420,27 @@ function openWhatsAppOrder(id, color, size, qty) {
     </div>`;
   m.style.display = "block";
   document.body.style.overflow = "hidden";
+  waRenderSummary();
+}
+function waRenderSummary() {
+  if (!_waCtx) return;
+  const sub = _waCtx.p.price * _waCtx.qty;
+  const ship = shipCost(sub);
+  document.getElementById("wa-sum-sub").textContent = fmt(sub);
+  const shipEl = document.getElementById("wa-sum-ship");
+  const noteEl = document.getElementById("wa-ship-note");
+  if (ship === 0) {
+    shipEl.textContent = "FREE";
+    shipEl.style.color = "#16a34a";
+    noteEl.textContent = "FREE delivery unlocked.";
+    noteEl.style.color = "#16a34a";
+  } else {
+    shipEl.textContent = fmt(ship);
+    shipEl.style.color = "";
+    noteEl.textContent = "Add " + fmt(FREE_SHIP_THRESHOLD - sub) + " more for FREE delivery.";
+    noteEl.style.color = "#737373";
+  }
+  document.getElementById("wa-sum-total").textContent = fmt(sub + ship);
 }
 function closeWhatsAppOrder() {
   const m = document.getElementById("wa-order-modal");
@@ -427,6 +454,7 @@ function waChQty(d) {
   document.getElementById("wa-f-qty").textContent = _waCtx.qty;
   document.getElementById("wa-qty-show").textContent = _waCtx.qty;
   document.getElementById("wa-total-show").textContent = fmt(_waCtx.p.price * _waCtx.qty);
+  waRenderSummary();
 }
 function waApplyPromo() {
   const el = document.getElementById("wa-f-promo");
@@ -448,18 +476,22 @@ function submitWhatsAppOrder() {
   document.getElementById("wa-f-err").classList.toggle("hidden", !bad);
   if (bad) return;
   const c = _waCtx;
+  const sub = c.p.price * c.qty;
+  const ship = shipCost(sub);
   const lines = [
     "NEW ORDER — TAJ LEATHERS",
     "Product: " + c.p.name + " (" + SECTIONS[c.p.section].name + ")",
     "Variant: " + c.color + " / " + c.size,
-    "Qty: " + c.qty + " — Price: " + fmt(c.p.price * c.qty),
+    "Qty: " + c.qty + " — Price: " + fmt(sub),
+    "Delivery: " + (ship === 0 ? "FREE" : fmt(ship)),
+    "Total: " + fmt(sub + ship),
     "----",
     "Name: " + name,
     "Phone: " + phone,
     "Location: " + city,
     "Address: " + addr,
     "Landmark: " + (landmark || "—"),
-    "Promo: ",
+    "Promo: " + (c.promo || "—"),
   ];
   window.open("https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
   closeWhatsAppOrder();
