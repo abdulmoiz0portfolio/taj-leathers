@@ -348,9 +348,12 @@ function paintMobile() {
       </a>`).join("")}</div>
   </section>
   <div class="buy">
-    <div class="p"><b>${fmt(p.price * qty)}</b>${p.oldPrice > p.price ? `<s>${fmt(p.oldPrice * qty)}</s>` : ""}</div>
-    <button class="btn" onclick="doAdd()">Add to cart</button>
-    <button class="wa" onclick="openWhatsAppOrder(p.id, selColor, selSize, qty)" aria-label="Order on WhatsApp">${waSvg}</button>
+    <div class="buy-row">
+      <div class="p"><b>${fmt(p.price * qty)}</b>${p.oldPrice > p.price ? `<s>${fmt(p.oldPrice * qty)}</s>` : ""}</div>
+      <button class="btn" onclick="doAdd()">Add to cart</button>
+      <button class="btn now" onclick="buyNow()">Order Now</button>
+    </div>
+    <button class="wa-wide" onclick="openWhatsAppOrder(p.id, selColor, selSize, qty)">${waSvg}<span>Order on WhatsApp</span></button>
   </div>`;
   mGalSync(); mGalInit(); mRenderReviews(); updateCartBadge();
 }
@@ -377,6 +380,10 @@ function chQty(d) { qty = Math.max(1, Math.min(9, qty + d)); paint(); }
 function doAdd() {
   addToCart(p.id, qty, selColor, selSize);
   toast(`${p.name} added to cart`);
+}
+function buyNow() {
+  addToCart(p.id, qty, selColor, selSize);
+  location.href = "checkout.html";
 }
 paint();
 pushRecent(p.id);
