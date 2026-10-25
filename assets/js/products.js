@@ -40,10 +40,10 @@ const LEATHER_PRODUCTS = [
   // ---- WATCH STRAPS ----
   // ---- NEW WALLETS (2026-10-21 batch, price Rs 1,600) ----
   { id: "wallet-onyx", name: "Bifold Wallet", cat: "wallets",
-    price: 1300, oldPrice: 2000, img: "light/taj-wallet-1-closed-light.webp",
+    price: 1300, oldPrice: 2000, img: "light/p1-closed-box-angle1-light.webp",
     gallery: ["light/taj-wallet-1-closed-light.webp","light/taj-wallet-3-flatlay-light.webp","light/p1-open-interior-front-light.webp","light/p1-closed-box-angle1-light.webp"],
     colors: ["Jet Black", "Camel Tan"], sizes: ["Standard"],
-    colorImages: { "Jet Black": "light/taj-wallet-1-closed-light.webp", "Camel Tan": "light/camel-top-box-wallet.webp" },
+    colorImages: { "Jet Black": "light/p1-closed-box-angle1-light.webp", "Camel Tan": "light/camel-top-box-wallet.webp" },
     colorGalleries: { "Jet Black": ["light/taj-wallet-1-closed-light.webp","light/taj-wallet-3-flatlay-light.webp","light/p1-open-interior-front-light.webp","light/p1-closed-box-angle1-light.webp"], "Camel Tan": ["light/camel-top-box-wallet.webp","light/p2-with-box-top-light.webp","light/taj-wallet2-taupe-light.webp","light/p2-open-flat-exterior-2-light.webp"] },
     badge: "-35%",
     desc: "Smooth genuine leather in a clean classic bifold. Slim in the pocket, roomy where it counts — cards, notes, and nothing extra.",
