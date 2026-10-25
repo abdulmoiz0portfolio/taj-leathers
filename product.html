@@ -102,9 +102,12 @@ function paint() {
   const curGal = getActiveGallery();
   document.getElementById("product-wrap").innerHTML = `
     <div class="relative rounded-3xl overflow-hidden bg-[#fafafa] border border-black/5">
-      <div id="gal-strip" class="gal-strip">${(curGal.length ? curGal : [activeImg]).map(g =>
-        `<div class="gal-slide"><img src="assets/img/${g}" alt="${p.name}" class="w-full aspect-square object-cover"></div>`
-      ).join("")}</div>
+      <div class="relative">
+        <div id="gal-strip" class="gal-strip">${(curGal.length ? curGal : [activeImg]).map(g =>
+          `<div class="gal-slide"><img src="assets/img/${g}" alt="${p.name}" class="w-full aspect-square object-cover"></div>`
+        ).join("")}</div>
+        ${curGal.length > 1 ? `<button onclick="galStep(-1)" aria-label="Previous photo" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);z-index:10;width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(0,0,0,.15);font-size:22px;line-height:1;color:#262626;">‹</button><button onclick="galStep(1)" aria-label="Next photo" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:10;width:40px;height:40px;border-radius:9999px;background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(0,0,0,.15);font-size:22px;line-height:1;color:#262626;">›</button>` : ""}
+      </div>
       ${curGal.length > 1 ? `<div class="flex gap-2 mt-3 overflow-x-auto pb-1">` + curGal.map((g,i) =>
         `<img src="assets/img/${g}" onclick="switchMainImg('${g}')" class="gal-thumb w-16 h-16 object-cover rounded-lg cursor-pointer ring-2 ${g===activeImg?'ring-[#D4AF37]':'ring-transparent'} hover:ring-[#D4AF37] transition shrink-0">`
       ).join("") + `</div>` : ""}
@@ -200,6 +203,12 @@ function galInitStrip() {
     }, 90);
   });
 }
+function galStep(dir) {
+  const gal = galList();
+  if (gal.length < 2) return;
+  const idx = (galActiveIndex() + dir + gal.length) % gal.length;
+  switchMainImg(gal[idx]);
+}
 /* ---------- mobile product UI (phones only, artifact design + real data) ---------- */
 let mRevStars = 5;
 function mGalList() { const g = getActiveGallery(); return g.length ? g : [activeImg]; }
@@ -292,6 +301,7 @@ function paintMobile() {
     <div class="track" id="m-track">${gal.map(g =>
       `<div class="slide"><img src="assets/img/${g}" alt="${p.name}"></div>`
     ).join("")}</div>
+    ${gal.length > 1 ? `<button class="gal-arrow prev" aria-label="Previous photo" onclick="galStep(-1)">‹</button><button class="gal-arrow next" aria-label="Next photo" onclick="galStep(1)">›</button>` : ""}
     <span class="count" id="m-count">1 / ${gal.length}</span>
   </div>
   <div class="thumbs" id="m-thumbs" role="tablist" aria-label="Product photos">${gal.map((g, i) =>
