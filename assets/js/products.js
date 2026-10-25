@@ -39,7 +39,7 @@ const LEATHER_PRODUCTS = [
   // ---- WALLETS ----
   // ---- WATCH STRAPS ----
   // ---- NEW WALLETS (2026-10-21 batch, price Rs 1,600) ----
-  { id: "wallet-onyx", name: "Onyx Black Wallet", cat: "wallets",
+  { id: "wallet-onyx", name: "Bifold Wallet", cat: "wallets",
     price: 1600, oldPrice: 2000, img: "light/taj-wallet-1-closed-light.webp",
     gallery: ["light/taj-wallet-1-closed-light.webp","light/taj-wallet-2-open-light.webp","light/taj-wallet-3-flatlay-light.webp","light/p1-open-interior-front-light.webp","light/p1-closed-box-angle1-light.webp"],
     colors: ["Jet Black", "Camel Tan"], sizes: ["Standard"],
