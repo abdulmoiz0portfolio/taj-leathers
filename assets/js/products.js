@@ -33,7 +33,7 @@ const LEATHER_PRODUCTS = [
     colorImages: { "Brown": "light/p6-belt-27-v2.webp", "Black": "light/p6-belt-22-v2.webp" },
     colorGalleries: {
       "Brown": ["light/p6-belt-27-v2.webp","light/p6-belt-lemination-brown-2.webp"],
-      "Black": ["light/p6-belt-22-v2.webp"]
+      "Black": ["light/p6-belt-22-v2.webp","light/p6-belt-lemination-black-2.webp"]
     },
     badge: "-21%",
     desc: "Sleek laminated protective finish that resists scuffs, moisture, and daily wear. Long-lasting, sturdy, and easy to maintain.",
