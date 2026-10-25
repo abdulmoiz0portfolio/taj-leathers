@@ -48,7 +48,7 @@ const LEATHER_PRODUCTS = [
     badge: "-20%",
     desc: "Smooth genuine leather in a clean classic bifold. Slim in the pocket, roomy where it counts — cards, notes, and nothing extra.",
     details: ["Smooth genuine leather exterior", "Multiple card slots + note compartments", "Hand-stitched edges", "Classic slim bifold profile"] },
-  { id: "wallet-twotone", name: "Heritage Two-Tone Wallet", cat: "wallets",
+  { id: "wallet-twotone", name: "Brown & Black Two-Tone Wallet", cat: "wallets",
     price: 1600, oldPrice: 2000, img: "light/p5-30101-light.webp",
     gallery: ["light/p5-30101-light.webp","light/taj-wallet5-twotone-light.webp","light/p5-30059-light.webp","light/p5-30058-light.webp"],
     colors: ["Black", "Dark Brown"], sizes: ["Standard"],
