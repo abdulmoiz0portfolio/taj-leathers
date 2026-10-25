@@ -19,6 +19,7 @@
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/mobile.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -32,7 +33,7 @@
 <div id="site-header"></div>
 
 <!-- HERO -->
-<section class="relative overflow-hidden bg-[#0c0a09]">
+<section class="desk-sec relative overflow-hidden bg-[#0c0a09]">
   <img src="assets/img/hero.webp" alt="Handcrafted leather goods" class="absolute inset-0 w-full h-full object-cover opacity-45">
   <div class="absolute inset-0 bg-gradient-to-r from-black via-black/70 to-transparent"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 py-32 sm:py-44">
@@ -58,7 +59,7 @@
 </section>
 
 <!-- WHY CHOOSE US -->
-<section class="bg-[#fafafa] border-b border-black/5 reveal">
+<section class="desk-sec bg-[#fafafa] border-b border-black/5 reveal">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
     <div>
       <div class="w-14 h-14 mx-auto rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center mb-4">
@@ -85,7 +86,7 @@
 </section>
 
 <!-- CATEGORIES -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 py-20 reveal">
+<section class="desk-sec max-w-7xl mx-auto px-4 sm:px-6 py-20 reveal">
   <h2 class="font-serif text-3xl sm:text-4xl text-[#000000] text-center mb-3">Shop by Category</h2>
   <p class="text-[#525252] text-center mb-10">Three essentials. Zero compromises.</p>
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -111,7 +112,7 @@
 </section>
 
 <!-- BESTSELLERS -->
-<section class="bg-[#fafafa] border-y border-black/5 reveal">
+<section class="desk-sec bg-[#fafafa] border-y border-black/5 reveal">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20">
     <div class="flex items-end justify-between mb-10">
       <div>
@@ -125,7 +126,7 @@
 </section>
 
 <!-- TESTIMONIALS -->
-<section class="bg-[#0c0a09] reveal">
+<section class="desk-sec bg-[#0c0a09] reveal">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-20">
     <h2 class="font-serif text-3xl sm:text-4xl text-white text-center mb-3">Worn &amp; Loved</h2>
     <p class="text-gray-400 text-center mb-12">Real customers, real leather.</p>
@@ -145,7 +146,7 @@
 </section>
 
 <!-- NEWSLETTER -->
-<section class="reveal">
+<section class="desk-sec reveal">
   <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
     <p class="text-[#D4AF37] uppercase tracking-[0.3em] text-xs mb-4">Newsletter</p>
     <h2 class="font-serif text-3xl sm:text-4xl text-[#000000] mb-3">Join the Inner Circle</h2>
@@ -159,6 +160,7 @@
 </section>
 
 <div id="site-footer"></div>
+<div class="m-app m-home" id="m-home"></div>
 <script src="assets/js/products.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/app.js"></script>
@@ -186,6 +188,118 @@ function homeNews(e) {
   document.getElementById("home-news").reset();
   return false;
 }
+</script>
+<script>
+/* ---------- mobile home UI (phones only, artifact design + real data) ---------- */
+(function () {
+  const root = document.getElementById("m-home");
+  if (!root) return;
+  const picks = ["wallet-onyx", "belt-plain", "wallet-twotone", "belt-mailed", "wallet-camel", "belt-crocodile", "wallet-stripe", "wallet-onyx-zip"];
+  const prods = picks.map(id => PRODUCTS.find(x => x.id === id)).filter(Boolean);
+  let mFilter = "all";
+  const disc = p => Math.round((1 - p.price / p.oldPrice) * 100);
+  const heartSvg = '<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.3-9A5.2 5.2 0 0 1 12 6.5 5.2 5.2 0 0 1 21.3 12C19 16.5 12 21 12 21z"/></svg>';
+  const searchSvg = '<svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+  const cartSvg = '<svg viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>';
+  const card = p => `
+    <article class="pc">
+      <div class="im">
+        ${p.oldPrice > p.price ? `<span class="badge">-${disc(p)}%</span>` : ""}
+        <button class="heart" data-wish="${p.id}" aria-pressed="${isWished(p.id)}" aria-label="Save ${p.name}" onclick="toggleWish('${p.id}')">${heartSvg}</button>
+        <a href="product.html?section=${p.section}&id=${p.id}"><img src="assets/img/${p.img}" alt="${p.name}" loading="lazy"></a>
+      </div>
+      <div class="pb">
+        <em>${CATS[p.cat].name}</em>
+        <h3><a href="product.html?section=${p.section}&id=${p.id}">${p.name}</a></h3>
+        <div class="pr"><b>${fmt(p.price)}</b>${p.oldPrice > p.price ? `<s>${fmt(p.oldPrice)}</s>` : ""}</div>
+        <button class="add" onclick="quickAdd('${p.id}')">Add to cart</button>
+      </div>
+    </article>`;
+  function renderGrid() {
+    const list = prods.filter(p => mFilter === "all" || p.cat === mFilter);
+    document.getElementById("m-grid").innerHTML = list.map(card).join("");
+    document.querySelectorAll("#m-home .pill").forEach(b =>
+      b.setAttribute("aria-pressed", String(b.dataset.f === mFilter)));
+  }
+  window.mSetFilter = f => { mFilter = f; renderGrid(); };
+  window.mClaim = () => { const r = setPromo("WELCOME10"); toast(r.msg); };
+  root.innerHTML = `
+  <div class="ann">Free delivery over Rs 8,000 · Code WELCOME10: 10% off</div>
+  <header>
+    <a class="logo" href="#m-top" aria-label="Taj Leathers home">TAJ <b>LEATHERS</b></a>
+    <div class="ic">
+      <button aria-label="Search" onclick="openSearch()">${searchSvg}</button>
+      <a href="cart.html" aria-label="Cart">${cartSvg}<span class="dot cart-count">0</span></a>
+    </div>
+  </header>
+  <div class="hero" id="m-top">
+    <div class="coil" aria-hidden="true"></div>
+    <small>Handcrafted in Lahore, Pakistan</small>
+    <h1>Premium leather, made to outlive trends.</h1>
+    <p>Belts and wallets in 100% genuine full-grain leather — cut, stitched and burnished by hand. Backed by a lifetime warranty.</p>
+    <div class="g48"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>If your order doesn’t arrive within 48 hours, your entire shopping is FREE.</span></div>
+    <div class="btns"><a class="btn gold" href="#m-best">Shop bestsellers</a><a class="btn ghost" href="#m-craft">Our craft</a></div>
+    <div class="stats"><div>100%<span>Genuine leather</span></div><div>Lifetime<span>Warranty</span></div><div>COD<span>Nationwide</span></div></div>
+  </div>
+  <div class="chips" id="m-craft">
+    <div class="chip"><i></i>Full-grain hides only</div>
+    <div class="chip"><i></i>Hand-stitched in Lahore</div>
+    <div class="chip"><i></i>Lifetime warranty</div>
+    <div class="chip"><i></i>7-day easy exchange</div>
+    <div class="chip"><i></i>Pay on delivery</div>
+  </div>
+  <section>
+    <div class="sh"><h2>Shop by category</h2></div>
+    <div class="cats">
+      <a class="cat" href="category.html?section=leathers&cat=belts"><img src="assets/img/light/p6-belt-07-v2.webp" alt="Belts"><h3>Belts</h3><span>Cut to last a lifetime</span></a>
+      <a class="cat w" href="category.html?section=leathers&cat=wallets"><img src="assets/img/light/taj-wallet-1-closed-light.webp" alt="Wallets"><h3>Wallets</h3><span>Carry less, keep more</span></a>
+    </div>
+  </section>
+  <section id="m-best">
+    <div class="sh"><h2>Bestsellers</h2><a href="leathers.html">View all</a></div>
+    <div class="pills" role="group" aria-label="Filter products">
+      <button class="pill" data-f="all" aria-pressed="true" onclick="mSetFilter('all')">All</button>
+      <button class="pill" data-f="wallet" aria-pressed="false" onclick="mSetFilter('wallet')">Wallets</button>
+      <button class="pill" data-f="belt" aria-pressed="false" onclick="mSetFilter('belt')">Belts</button>
+    </div>
+    <div class="grid" id="m-grid"></div>
+  </section>
+  <div class="band">
+    <h2>Delivered in 48 hours, or your order is free.</h2>
+    <p>Dispatch within 24 hours of confirmation. Cash on delivery across Pakistan.</p>
+    <a class="btn gold" href="#m-best">Start shopping</a>
+  </div>
+  <section>
+    <div class="sh"><h2>Worn &amp; loved</h2></div>
+    <div class="rv">
+      <div class="rc"><div class="st">★★★★★</div><q>The Heritage belt feels like it was made for me. Edges are flawless, buckle is solid brass — you can tell it’s real full-grain from the smell alone.</q><span><b>Ahmed R.</b> · Lahore</span></div>
+      <div class="rc"><div class="st">★★★★★</div><q>Ordered the Executive Bifold on COD. Delivery took 3 days, stitching is perfect, and it still looks new after two months in my back pocket daily.</q><span><b>Bilal K.</b> · Karachi</span></div>
+    </div>
+  </section>
+  <div class="nl">
+    <h2>Get 10% off your first order.</h2>
+    <p>Early access to limited runs and workshop stories. One email a week, no spam.</p>
+    <input type="email" placeholder="Your email address" aria-label="Email address">
+    <button class="btn gold" onclick="mClaim()">Claim 10% off</button>
+  </div>
+  <footer>
+    <details><summary>Shop</summary><a href="leathers.html">Shop all</a><a href="category.html?section=leathers&cat=belts">Belts</a><a href="category.html?section=leathers&cat=wallets">Wallets</a></details>
+    <details><summary>Help</summary><a href="track.html">Track your order</a><a href="wishlist.html">Wishlist</a><a href="about.html">About us</a><a href="contact.html">Contact us</a></details>
+    <details><summary>Policies</summary><a href="shipping.html">Shipping &amp; delivery</a><a href="returns.html">Returns &amp; exchange</a><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms &amp; conditions</a></details>
+    <details><summary>Contact</summary><p>WhatsApp: +92 314 8253657</p><p>Mon–Sat, 9 AM – 9 PM · Karachi, Pakistan</p></details>
+    <div class="copy">© 2026 Taj Leathers. Crafted with pride in Pakistan.</div>
+  </footer>
+  <nav class="tabs" aria-label="Main">
+    <a class="tab on" href="#m-top"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</a>
+    <a class="tab" href="leathers.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Shop</a>
+    <a class="tab" href="wishlist.html"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.3-9A5.2 5.2 0 0 1 12 6.5 5.2 5.2 0 0 1 21.3 12C19 16.5 12 21 12 21z"/></svg>Wishlist</a>
+    <a class="tab" href="cart.html"><svg viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>Cart<span class="dot cart-count">0</span></a>
+  </nav>
+  <a class="wa" href="https://wa.me/923148253657" aria-label="Chat on WhatsApp"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.1-1 .2-3.300-.7-2.800-1.100-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.400 0 .5l-.4.600c-.2.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.200 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg></a>`;
+  renderGrid();
+  updateCartBadge(); updateWishBadge();
+  document.addEventListener("taj:catalog-updated", renderGrid);
+})();
 </script>
 </body>
 </html>

@@ -18,6 +18,7 @@
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
+<link rel="stylesheet" href="assets/css/mobile.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>body{font-family:'Inter',sans-serif;background:#ffffff}.font-serif{font-family:'Cinzel',serif}
@@ -26,12 +27,12 @@
 <body class="text-[#1a1a1a]">
 <div id="site-header"></div>
 
-<section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+<section class="desk-sec max-w-7xl mx-auto px-4 sm:px-6 py-12">
   <a href="category.html" class="text-sm text-[#525252] hover:text-[#D4AF37]">← Back to shop</a>
   <div id="product-wrap" class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16"></div>
 </section>
 
-<section class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+<section class="desk-sec max-w-7xl mx-auto px-4 sm:px-6 py-10">
   <h2 class="font-serif text-2xl sm:text-3xl text-[#000000] mb-8">Customer Reviews</h2>
   <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
     <div class="lg:col-span-2">
@@ -48,12 +49,13 @@
   </div>
 </section>
 
-<section class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+<section class="desk-sec max-w-7xl mx-auto px-4 sm:px-6 py-10">
   <h2 class="font-serif text-2xl sm:text-3xl text-[#000000] mb-8">You may also like</h2>
   <div id="related" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
 </section>
 
 <div id="site-footer"></div>
+<div class="m-app m-prod" id="m-product"></div>
 <script src="assets/js/products.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/app.js"></script>
@@ -153,6 +155,7 @@ function paint() {
     </div>`;
   galSyncStrip();
   galInitStrip();
+  paintMobile();
 }
 /* ---------- featured-image gallery strip (swipe + thumbnail sync) ---------- */
 function galList() {
@@ -190,9 +193,155 @@ function galInitStrip() {
       if (gal[idx] && gal[idx] !== activeImg) {
         activeImg = gal[idx];
         galPaintThumbs(idx);
+        mGalPaint(idx);
+        const m = document.getElementById("m-track");
+        if (m) m.scrollLeft = idx * m.clientWidth;
       }
     }, 90);
   });
+}
+/* ---------- mobile product UI (phones only, artifact design + real data) ---------- */
+let mRevStars = 5;
+function mGalList() { const g = getActiveGallery(); return g.length ? g : [activeImg]; }
+function mGalIndex() { const i = mGalList().indexOf(activeImg); return i < 0 ? 0 : i; }
+function mGalPaint(idx) {
+  document.querySelectorAll("#m-thumbs .th").forEach((t, i) => {
+    if (i === idx) t.setAttribute("aria-current", "true"); else t.removeAttribute("aria-current");
+  });
+  const c = document.getElementById("m-count");
+  if (c) c.textContent = (idx + 1) + " / " + mGalList().length;
+}
+function mGalSync() {
+  const strip = document.getElementById("m-track");
+  if (!strip) return;
+  strip.scrollLeft = mGalIndex() * strip.clientWidth;
+  mGalPaint(mGalIndex());
+}
+function mGalInit() {
+  const strip = document.getElementById("m-track");
+  if (!strip || strip._mGalInit) return;
+  strip._mGalInit = true;
+  let t;
+  strip.addEventListener("scroll", () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const w = strip.clientWidth;
+      if (!w) return;
+      const idx = Math.min(Math.round(strip.scrollLeft / w), strip.children.length - 1);
+      const gal = mGalList();
+      if (gal[idx] && gal[idx] !== activeImg) {
+        activeImg = gal[idx];
+        galPaintThumbs(idx);
+        mGalPaint(idx);
+        const d = document.getElementById("gal-strip");
+        if (d) d.scrollLeft = idx * d.clientWidth;
+      }
+    }, 90);
+  });
+}
+function mOptBtn(list, sel, fn) {
+  return list.map(v => `<button aria-pressed="${v === sel}" onclick="${fn}('${v}')">${v}</button>`).join("");
+}
+function mRenderStars() {
+  const st = document.getElementById("m-stars");
+  if (st) st.innerHTML = [1, 2, 3, 4, 5].map(i =>
+    `<button class="${i <= mRevStars ? "on" : ""}" onclick="mRevStars=${i};mRenderStars()" aria-label="${i} star">★</button>`).join("");
+}
+function mRenderReviews() {
+  const box = document.getElementById("m-rev-list");
+  if (!box) return;
+  const rs = getReviews(p.id);
+  box.innerHTML = rs.length ? rs.map(r =>
+    `<div class="m-rev"><span class="st">${"★".repeat(r.stars)}<span style="color:#c9c4b8">${"★".repeat(5 - r.stars)}</span></span><p><b>${r.name.replace(/</g, "&lt;")}</b> — ${r.text.replace(/</g, "&lt;")}</p></div>`
+  ).join("") : `<p class="empty">No reviews yet. Share your experience with this product.</p>`;
+  mRenderStars();
+}
+function mSubmitReview() {
+  const n = document.getElementById("m-rn").value.trim();
+  const t = document.getElementById("m-rt").value.trim();
+  if (n.length < 2 || t.length < 3) { toast("Add your name and a few words"); return; }
+  addReview(p.id, n, mRevStars, t);
+  document.getElementById("m-rn").value = "";
+  document.getElementById("m-rt").value = "";
+  mRevStars = 5;
+  mRenderReviews(); renderReviews();
+  toast("Thanks! Your review was posted.");
+}
+function paintMobile() {
+  const root = document.getElementById("m-product");
+  if (!root) return;
+  const gal = mGalList();
+  const r = avgRating(p.id);
+  const related = PRODUCTS.filter(x => x.section === p.section && x.cat === p.cat && x.id !== p.id).slice(0, 4);
+  const heartSvg = '<svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.3-9A5.2 5.2 0 0 1 12 6.5 5.2 5.2 0 0 1 21.3 12C19 16.5 12 21 12 21z"/></svg>';
+  const waSvg = '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.2-1.4A10 10 0 1 0 12 2zm5.2 14.1c-.2.6-1.300 1.200-1.800 1.200-.5.1-1 .2-3.300-.7-2.800-1.100-4.600-4-4.700-4.200-.1-.2-1.100-1.500-1.100-2.800s.7-2 1-2.300c.2-.3.500-.3.700-.3h.5c.2 0 .4 0 .6.500l.8 2c.1.200.1.400 0 .5l-.4.600c-.2.200-.3.300-.1.600.2.300.8 1.300 1.700 2.100 1.200 1 2.100 1.300 2.400 1.500.3.100.5.100.6-.1l.9-1.100c.2-.3.400-.2.600-.1l1.900.9c.3.100.5.200.5.300.1.200.1.800-.1 1.400z"/></svg>';
+  root.innerHTML = `
+  <div class="ann">Free delivery over Rs 8,000 · Code WELCOME10: 10% off</div>
+  <header>
+    <a class="back" href="category.html?section=${p.section}" aria-label="Back to shop"><svg class="i" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <a class="logo" href="index.html">TAJ <b>LEATHERS</b></a>
+    <div class="ic">
+      <a href="wishlist.html" aria-label="Wishlist"><svg class="i" viewBox="0 0 24 24"><path d="M12 21s-7-4.5-9.3-9A5.2 5.2 0 0 1 12 6.5 5.2 5.2 0 0 1 21.3 12C19 16.5 12 21 12 21z"/></svg></a>
+      <a href="cart.html" aria-label="Cart"><svg class="i" viewBox="0 0 24 24"><path d="M6 7h12l1 13H5L6 7z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg><span class="dot cart-count">0</span></a>
+    </div>
+  </header>
+  <div class="crumb"><a href="category.html?section=${p.section}">Shop</a> / <a href="category.html?section=${p.section}&cat=${p.cat}">${CATS[p.cat].name}</a> / ${p.name}</div>
+  <div class="gal">
+    <span class="tag">${p.badge} OFF</span>
+    <button class="heart" data-wish="${p.id}" aria-pressed="${isWished(p.id)}" aria-label="Save to wishlist" onclick="toggleWish('${p.id}')">${heartSvg}</button>
+    <div class="track" id="m-track">${gal.map(g =>
+      `<div class="slide"><img src="assets/img/${g}" alt="${p.name}"></div>`
+    ).join("")}</div>
+    <span class="count" id="m-count">1 / ${gal.length}</span>
+  </div>
+  <div class="thumbs" id="m-thumbs" role="tablist" aria-label="Product photos">${gal.map((g, i) =>
+    `<button class="th" role="tab" aria-label="Photo ${i + 1}" ${i === mGalIndex() ? 'aria-current="true"' : ""} onclick="switchMainImg('${g}')"><img src="assets/img/${g}" alt="${p.name} photo ${i + 1}"></button>`
+  ).join("")}</div>
+  <div class="info">
+    <small>${CATS[p.cat].name}</small>
+    <h1>${p.name}</h1>
+    <div class="price"><b>${fmt(p.price)}</b>${p.oldPrice > p.price ? `<s>${fmt(p.oldPrice)}</s><span class="save">Save ${fmt(p.oldPrice - p.price)}</span>` : ""}</div>
+    <div class="rate">${r.count ? starsHTML(r.avg, r.count) + ` <span>${r.count} review${r.count > 1 ? "s" : ""}</span>` : "No reviews yet — be the first"}</div>
+    <p class="desc">${p.desc}</p>
+    <div class="perks">
+      <div class="perk"><i>100%</i>Genuine leather</div>
+      <div class="perk"><i>Lifetime</i>Warranty</div>
+      <div class="perk"><i>COD</i>Nationwide</div>
+    </div>
+    <div class="opt"><label>Color: <b>${selColor}</b></label><div class="sw">${mOptBtn(p.colors, selColor, "setColor")}</div></div>
+    <div class="opt"><label>Size: <b>${selSize}</b></label><div class="sw">${mOptBtn(p.sizes, selSize, "setSize")}</div></div>
+    <div class="opt"><label>Quantity</label><div class="qty"><button onclick="chQty(-1)" aria-label="Decrease">−</button><span>${qty}</span><button onclick="chQty(1)" aria-label="Increase">+</button></div></div>
+    <div class="g48"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>If your order isn’t delivered in Karachi within 48 hours, your entire shopping is FREE.</span></div>
+    <div class="acc">
+      ${acc("Details & Materials", "<ul class='list-disc pl-5 space-y-1.5'>" + p.details.map(d => `<li>${d}</li>`).join("") + "</ul>")}
+      ${acc("Shipping & Delivery", "<strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ". On orders below " + fmt(FREE_SHIP_THRESHOLD) + ", delivery charges are Rs 200. If your order is not delivered in Karachi within 48 hours, your entire shopping is FREE.")}
+      ${acc("Lifetime Warranty", "If the stitching, buckle or hardware ever fails under normal use, we repair or replace it free — for life. 7-day easy exchange for unused items.")}
+    </div>
+  </div>
+  <section>
+    <h2>Customer reviews</h2>
+    <div id="m-rev-list"></div>
+    <div class="rf">
+      <div class="stars" id="m-stars" role="radiogroup" aria-label="Rating"></div>
+      <input id="m-rn" placeholder="Your name" aria-label="Your name">
+      <textarea id="m-rt" placeholder="What did you think of this product?" aria-label="Review"></textarea>
+      <button class="btn" onclick="mSubmitReview()">Submit review</button>
+    </div>
+  </section>
+  <section>
+    <h2>You may also like</h2>
+    <div class="m-rel-grid">${related.map(x => `
+      <a class="mrc" href="product.html?section=${x.section}&id=${x.id}">
+        <div class="im"><img src="assets/img/${x.img}" alt="${x.name}" loading="lazy"></div>
+        <div class="t"><h3>${x.name}</h3><b>${fmt(x.price)}</b></div>
+      </a>`).join("")}</div>
+  </section>
+  <div class="buy">
+    <div class="p"><b>${fmt(p.price * qty)}</b>${p.oldPrice > p.price ? `<s>${fmt(p.oldPrice * qty)}</s>` : ""}</div>
+    <button class="btn" onclick="doAdd()">Add to cart</button>
+    <button class="wa" onclick="openWhatsAppOrder(p.id, selColor, selSize, qty)" aria-label="Order on WhatsApp">${waSvg}</button>
+  </div>`;
+  mGalSync(); mGalInit(); mRenderReviews(); updateCartBadge();
 }
 function switchMainImg(src) {
   activeImg = src;
