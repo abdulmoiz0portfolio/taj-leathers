@@ -228,8 +228,8 @@ function renderChrome(active = "") {
       <span class="cart-count absolute -top-2 -right-2 bg-[#D4AF37] text-black text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center" style="display:none">0</span></button>`;
 
   document.getElementById("site-header").innerHTML = `
-    <div class="bg-[#D4AF37] text-black text-center text-xs sm:text-sm font-semibold py-2 px-4">
-      Free delivery on orders over ${fmt(FREE_SHIP_THRESHOLD)} &nbsp;·&nbsp; Use <span class="underline underline-offset-2 font-bold">WELCOME10</span> for 10% off
+    <div class="ann-bar bg-[#D4AF37] text-black text-center text-xs sm:text-sm font-semibold py-2 px-4">
+      Free delivery over ${fmt(FREE_SHIP_THRESHOLD)} &nbsp;·&nbsp; <span class="underline underline-offset-2 font-bold">WELCOME10</span>: 10% off
     </div>
     <nav class="bg-[#ffffff]/95 backdrop-blur border-b border-black/10 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
