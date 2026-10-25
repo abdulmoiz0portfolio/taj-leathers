@@ -63,7 +63,7 @@
 const qs2 = new URLSearchParams(location.search);
 const section = SECTIONS[qs2.get("section")] ? qs2.get("section") : "leathers";
 const id = qs2.get("id");
-const p = PRODUCTS.find(p => p.id === id) || PRODUCTS.find(p => p.section === section) || PRODUCTS[0];
+const p = PRODUCTS.find(p => p.id === (id === "wallet-camel" ? "wallet-onyx" : id)) || PRODUCTS.find(p => p.section === section) || PRODUCTS[0];
 document.title = p.name + " — " + SECTIONS[p.section].name;
 (function () {
   const set = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
