@@ -350,9 +350,15 @@ function openWhatsAppOrder(id, color, size, qty) {
     document.body.appendChild(m);
   }
   const c = _waCtx;
+  if (!document.getElementById("taj-wa-scroll")) {
+    const st = document.createElement("style");
+    st.id = "taj-wa-scroll";
+    st.textContent = ".wa-scroll{scrollbar-width:thin;scrollbar-color:#D4AF37 transparent}.wa-scroll::-webkit-scrollbar{width:6px}.wa-scroll::-webkit-scrollbar-track{background:transparent}.wa-scroll::-webkit-scrollbar-thumb{background:#D4AF37;border-radius:99px}";
+    document.head.appendChild(st);
+  }
   m.innerHTML = `
     <div class="fixed inset-0 z-[120] bg-black/55 backdrop-blur-sm flex items-center justify-center p-4" onclick="if(event.target===this)closeWhatsAppOrder()">
-      <div class="bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 shadow-2xl max-h-[92dvh] overflow-auto">
+      <div class="wa-scroll bg-white rounded-3xl w-full max-w-md p-6 sm:p-8 shadow-2xl max-h-[92dvh] overflow-auto">
         <div class="flex items-start justify-between mb-1">
           <h3 class="font-serif text-2xl text-[#000000]">Order on WhatsApp</h3>
           <button onclick="closeWhatsAppOrder()" class="text-[#737373] hover:text-[#D4AF37] text-2xl leading-none">×</button>
