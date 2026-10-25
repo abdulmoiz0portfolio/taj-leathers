@@ -58,7 +58,7 @@ const LEATHER_PRODUCTS = [
   { id: "wallet-stripe", name: "Cognac Stripe Wallet", cat: "wallets",
     price: 1600, oldPrice: 2000, img: "light/p4-closed-front-light.webp",
     gallery: ["light/p4-closed-front-light.webp","light/p4-open-exterior-a-light.webp","light/p4-with-box-light.webp","light/taj-wallet4-brown-light.webp"],
-    colors: ["Brown", "Black"], sizes: ["Standard"],
+    colors: ["Brown"], sizes: ["Standard"],
     badge: "-20%",
     desc: "Warm brown pebbled leather with a thin black stripe down the middle — subtle, sharp, and easy to spot in a drawer full of wallets.",
     details: ["Pebbled genuine leather with stripe detail", "Multiple card slots + note compartments", "Hand-stitched edges", "Classic bifold fold"] },
