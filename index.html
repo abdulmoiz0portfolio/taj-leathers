@@ -158,7 +158,7 @@
 renderChrome("gateway");
 // bestsellers: mix across categories
 (function () {
-  const picks = ["wallet-onyx", "belt-plain", "wallet-twotone", "belt-mailed", "belt-lemination", "belt-crocodile", "wallet-stripe", "wallet-onyx-zip"];
+  const picks = ["wallet-onyx", "belt-plain", "wallet-twotone", "belt-mailed", "belt-lemination", "wallet-stripe", "wallet-onyx-zip"];
   const grid = document.getElementById("best-grid");
   grid.innerHTML = picks.map(id => {
     const p = PRODUCTS.find(x => x.id === id);
@@ -178,7 +178,7 @@ renderChrome("gateway");
 (function () {
   const root = document.getElementById("m-home");
   if (!root) return;
-  const picks = ["wallet-onyx", "belt-plain", "wallet-twotone", "belt-mailed", "belt-lemination", "belt-crocodile", "wallet-stripe", "wallet-onyx-zip"];
+  const picks = ["wallet-onyx", "belt-plain", "wallet-twotone", "belt-mailed", "belt-lemination", "wallet-stripe", "wallet-onyx-zip"];
   const prods = picks.map(id => PRODUCTS.find(x => x.id === id)).filter(Boolean);
   let mFilter = "all";
   const disc = p => Math.round((1 - p.price / p.oldPrice) * 100);

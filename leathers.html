@@ -165,7 +165,7 @@
 renderChrome("leathers-home");
 function renderLeatherGrids() {
   document.getElementById("featured-grid").innerHTML =
-    ["belt-plain","wallet-onyx","belt-crocodile","wallet-twotone"]
+    ["belt-plain","wallet-onyx","wallet-twotone"]
       .map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean).map(productCard).join("");
   const items = getRecent()
     .map(id => PRODUCTS.find(p => p.id === id))
