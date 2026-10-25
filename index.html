@@ -95,7 +95,7 @@
   <p class="text-[#525252] text-center mb-10">Three essentials. Zero compromises.</p>
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
     <a href="category.html?section=leathers&cat=wallets" class="group relative rounded-3xl overflow-hidden aspect-[4/5]">
-      <img src="assets/img/light/taj-wallet-1-closed-light.webp" alt="Wallets" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+      <img src="assets/img/light/taj-wallet-1-closed-light-480.webp" srcset="assets/img/light/taj-wallet-1-closed-light-480.webp 480w, assets/img/light/taj-wallet-1-closed-light-800.webp 800w" sizes="(min-width:640px) 33vw, 100vw" width="480" height="480" alt="Wallets" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
       <div class="absolute bottom-0 p-6">
         <h3 class="font-serif text-2xl text-white mb-1">Wallets</h3>
@@ -104,7 +104,7 @@
       </div>
     </a>
     <a href="category.html?section=leathers&cat=belts" class="group relative rounded-3xl overflow-hidden aspect-[4/5]">
-      <img src="assets/img/light/p6-belt-07-v2.webp" alt="Belts" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+      <img src="assets/img/light/p6-belt-07-v2-480.webp" srcset="assets/img/light/p6-belt-07-v2-480.webp 480w, assets/img/light/p6-belt-07-v2-800.webp 800w" sizes="(min-width:640px) 33vw, 100vw" width="480" height="480" alt="Belts" loading="lazy" decoding="async" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
       <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
       <div class="absolute bottom-0 p-6">
         <h3 class="font-serif text-2xl text-white mb-1">Belts</h3>
@@ -210,7 +210,7 @@ function homeNews(e) {
       <div class="im">
         ${p.oldPrice > p.price ? `<span class="badge">-${disc(p)}%</span>` : ""}
         <button class="heart" data-wish="${p.id}" aria-pressed="${isWished(p.id)}" aria-label="Save ${p.name}" onclick="toggleWish('${p.id}')">${heartSvg}</button>
-        <a href="product.html?section=${p.section}&id=${p.id}"><img src="assets/img/${p.img}" alt="${p.name}" loading="lazy"></a>
+        <a href="product.html?section=${p.section}&id=${p.id}"><img src="assets/img/${p.img.replace(/\.webp$/, "-480.webp")}" srcset="assets/img/${p.img.replace(/\.webp$/, "-480.webp")} 480w, assets/img/${p.img.replace(/\.webp$/, "-800.webp")} 800w" sizes="50vw" width="480" height="480" alt="${p.name}" loading="lazy" decoding="async"></a>
       </div>
       <div class="pb">
         <em>${CATS[p.cat].name}</em>
@@ -255,8 +255,8 @@ function homeNews(e) {
   <section>
     <div class="sh"><h2>Shop by category</h2></div>
     <div class="cats">
-      <a class="cat" href="category.html?section=leathers&cat=belts"><img src="assets/img/light/p6-belt-07-v2.webp" alt="Belts"><h3>Belts</h3><span>Cut to last a lifetime</span></a>
-      <a class="cat w" href="category.html?section=leathers&cat=wallets"><img src="assets/img/light/taj-wallet-1-closed-light.webp" alt="Wallets"><h3>Wallets</h3><span>Carry less, keep more</span></a>
+      <a class="cat" href="category.html?section=leathers&cat=belts"><img src="assets/img/light/p6-belt-07-v2-480.webp" srcset="assets/img/light/p6-belt-07-v2-480.webp 480w, assets/img/light/p6-belt-07-v2-800.webp 800w" sizes="50vw" width="480" height="480" alt="Belts" loading="lazy" decoding="async"><h3>Belts</h3><span>Cut to last a lifetime</span></a>
+      <a class="cat w" href="category.html?section=leathers&cat=wallets"><img src="assets/img/light/taj-wallet-1-closed-light-480.webp" srcset="assets/img/light/taj-wallet-1-closed-light-480.webp 480w, assets/img/light/taj-wallet-1-closed-light-800.webp 800w" sizes="50vw" width="480" height="480" alt="Wallets" loading="lazy" decoding="async"><h3>Wallets</h3><span>Carry less, keep more</span></a>
     </div>
   </section>
   <section id="m-best">
