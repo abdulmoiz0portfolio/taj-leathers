@@ -140,6 +140,11 @@
   display: flex; flex-direction: column; justify-content: flex-end;
   position: relative; overflow: hidden;
 }
+.m-app .cat img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.m-app .cat::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(250, 250, 248, 0) 30%, rgba(246, 239, 220, .92) 78%, #f6efdc);
+}
 .m-app .cat::before {
   content: ""; position: absolute; top: 18px; right: -26px; width: 110px; height: 110px;
   border-radius: 50%; border: 16px solid rgba(168, 132, 26, .35);
@@ -147,8 +152,8 @@
 .m-app .cat.w::before {
   border-radius: 14px; width: 96px; height: 68px; border-width: 2px; top: 30px;
 }
-.m-app .cat h3 { font-size: 20px; }
-.m-app .cat span { color: #7a5d0c; font-size: 13px; font-weight: 600; }
+.m-app .cat h3 { font-size: 20px; position: relative; z-index: 1; }
+.m-app .cat span { color: #7a5d0c; font-size: 13px; font-weight: 600; position: relative; z-index: 1; }
 .m-app .pills { display: flex; gap: 8px; margin-bottom: 14px; }
 .m-app .pill {
   height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line);

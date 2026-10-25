@@ -376,7 +376,7 @@ function openWhatsAppOrder(id, color, size, qty) {
           </div>
           <div>
             <label class="text-xs font-semibold text-[#262626] uppercase tracking-wider">City / Area *</label>
-            <input id="wa-f-city" type="text" placeholder="e.g. DHA Phase 5, Lahore" class="mt-1 w-full border border-black/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#25D366]">
+            <input id="wa-f-city" type="text" placeholder="e.g. DHA Phase 5, Karachi" class="mt-1 w-full border border-black/15 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#25D366]">
           </div>
           <div>
             <label class="text-xs font-semibold text-[#262626] uppercase tracking-wider">Full address *</label>
