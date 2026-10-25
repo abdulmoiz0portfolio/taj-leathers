@@ -162,7 +162,7 @@ function productCard(p) {
   const r = avgRating(p.id);
   const wished = isWished(p.id);
   return `
-  <div class="group bg-[#fafafa] rounded-2xl overflow-hidden border border-black/5 hover:border-[#D4AF37]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(249,115,22,0.12)]">
+  <div class="product-card group bg-[#fafafa] rounded-2xl overflow-hidden border border-black/5 hover:border-[#D4AF37]/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(249,115,22,0.12)]">
     <div class="block relative overflow-hidden aspect-square">
       <a href="product.html?section=${p.section}&id=${p.id}" class="absolute inset-0" aria-label="${p.name}">
         <img src="assets/img/${p.img}" alt="${p.name}" loading="lazy"
