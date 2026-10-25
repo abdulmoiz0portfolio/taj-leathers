@@ -239,7 +239,6 @@ function renderChrome(active = "") {
           ${nav("leathers.html", "Shop All", "leathers-home")}
           ${nav("category.html?section=leathers&cat=wallets", "Wallets", "wallets")}
           ${nav("category.html?section=leathers&cat=belts", "Belts", "belts")}
-          ${nav("track.html", "Track Order", "track")}
         </div>
         <div class="flex items-center gap-4">
           ${searchIcon}${wishIcon}${cartBtn}
@@ -254,7 +253,6 @@ function renderChrome(active = "") {
         ${nav("category.html?section=leathers&cat=wallets", "Wallets", "wallets")}
         ${nav("category.html?section=leathers&cat=belts", "Belts", "belts")}
         ${nav("wishlist.html", "Wishlist", "wishlist")}
-        ${nav("track.html", "Track Order", "track")}
       </div>
     </nav>`;
   document.getElementById("menu-btn").addEventListener("click", () =>
@@ -284,7 +282,6 @@ function renderChrome(active = "") {
         <div>
           <p class="text-[#000000] font-semibold mb-4 text-sm uppercase tracking-widest">Help</p>
           <div class="flex flex-col gap-2 text-sm text-[#525252]">
-            <a href="track.html" class="hover:text-[#D4AF37]">Track Your Order</a>
             <a href="cart.html" class="hover:text-[#D4AF37]">Your Cart</a>
             <a href="wishlist.html" class="hover:text-[#D4AF37]">Wishlist</a>
             <a href="about.html" class="hover:text-[#D4AF37]">About Us</a>
