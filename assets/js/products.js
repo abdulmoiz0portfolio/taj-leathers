@@ -2,10 +2,10 @@
 const LEATHER_PRODUCTS = [
   // ---- BELTS ----
   { id: "belt-mailed", name: "Mailed Belt", cat: "belts",
-    price: 1600, oldPrice: 2000, img: "light/p6-belt-18-v2.webp",
+    price: 1500, oldPrice: 2000, img: "light/p6-belt-18-v2.webp",
     gallery: ["light/p6-belt-18-v2.webp","light/p6-belt-19-v2.webp","light/p6-belt-20-v2.webp","light/p6-belt-21-v2.webp"],
     colors: ["Jet Black", "Espresso"], sizes: ["30", "32", "34", "36", "38", "40"],
-    badge: "-20%",
+    badge: "-25%",
     desc: "Premium milled grain leather belt crafted for daily durability and understated elegance. Finished by hand with a solid buckle.",
     details: ["100% genuine milled leather", "Solid alloy buckle, nickel-free", "Hand-burnished edges", "Width: 35mm"] },
   { id: "belt-crocodile", name: "Crocodile Belt", cat: "belts",
@@ -40,12 +40,12 @@ const LEATHER_PRODUCTS = [
   // ---- WATCH STRAPS ----
   // ---- NEW WALLETS (2026-10-21 batch, price Rs 1,600) ----
   { id: "wallet-onyx", name: "Bifold Wallet", cat: "wallets",
-    price: 1600, oldPrice: 2000, img: "light/taj-wallet-1-closed-light.webp",
+    price: 1300, oldPrice: 2000, img: "light/taj-wallet-1-closed-light.webp",
     gallery: ["light/taj-wallet-1-closed-light.webp","light/taj-wallet-2-open-light.webp","light/taj-wallet-3-flatlay-light.webp","light/p1-open-interior-front-light.webp","light/p1-closed-box-angle1-light.webp"],
     colors: ["Jet Black", "Camel Tan"], sizes: ["Standard"],
     colorImages: { "Jet Black": "light/taj-wallet-1-closed-light.webp", "Camel Tan": "light/camel-top-box-wallet.webp" },
     colorGalleries: { "Jet Black": ["light/taj-wallet-1-closed-light.webp","light/taj-wallet-2-open-light.webp","light/taj-wallet-3-flatlay-light.webp","light/p1-open-interior-front-light.webp","light/p1-closed-box-angle1-light.webp"], "Camel Tan": ["light/camel-top-box-wallet.webp","light/p2-with-box-top-light.webp","light/taj-wallet2-taupe-light.webp","light/p2-open-flat-exterior-2-light.webp"] },
-    badge: "-20%",
+    badge: "-35%",
     desc: "Smooth genuine leather in a clean classic bifold. Slim in the pocket, roomy where it counts — cards, notes, and nothing extra.",
     details: ["Smooth genuine leather exterior", "Multiple card slots + note compartments", "Hand-stitched edges", "Classic slim bifold profile"] },
   { id: "wallet-twotone", name: "Brown & Black Two-Tone Wallet", cat: "wallets",
