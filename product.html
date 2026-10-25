@@ -8,13 +8,13 @@
 <meta property="og:site_name" content="TAJ LEATHERS">
 <meta property="og:title" content="TAJ LEATHERS — Handcrafted Leather Goods">
 <meta property="og:description" content="Premium handcrafted leather belts and wallets. Full-grain leather, lifetime warranty.">
-<meta property="og:image" content="https://abdulmoiz0portfolio.github.io/taj-leathers/assets/img/hero.webp">
-<meta property="og:url" content="https://abdulmoiz0portfolio.github.io/taj-leathers/product.html">
+<meta property="og:image" content="https://tajleathers.pk/assets/img/hero.webp">
+<meta property="og:url" content="https://tajleathers.pk/product.html">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="TAJ LEATHERS — Handcrafted Leather Goods">
 <meta name="twitter:description" content="Premium handcrafted leather belts and wallets. Full-grain leather, lifetime warranty.">
-<meta name="twitter:image" content="https://abdulmoiz0portfolio.github.io/taj-leathers/assets/img/hero.webp">
-<link rel="canonical" href="https://abdulmoiz0portfolio.github.io/taj-leathers/product.html">
+<meta name="twitter:image" content="https://tajleathers.pk/assets/img/hero.webp">
+<link rel="canonical" href="https://tajleathers.pk/product.html">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
@@ -65,8 +65,8 @@ const p = PRODUCTS.find(p => p.id === id) || PRODUCTS.find(p => p.section === se
 document.title = p.name + " — " + SECTIONS[p.section].name;
 (function () {
   const set = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
-  const img = "https://abdulmoiz0portfolio.github.io/taj-leathers/assets/img/" + p.img;
-  const url = "https://abdulmoiz0portfolio.github.io/taj-leathers/product.html?section=" + p.section + "&id=" + p.id;
+  const img = "https://tajleathers.pk/assets/img/" + p.img;
+  const url = "https://tajleathers.pk/product.html?section=" + p.section + "&id=" + p.id;
   set('meta[property="og:title"]', "content", p.name + " — TAJ LEATHERS");
   set('meta[property="og:description"]', "content", p.desc);
   set('meta[property="og:image"]', "content", img);
