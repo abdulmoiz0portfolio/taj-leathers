@@ -9,7 +9,7 @@
   max-width: 430px; margin: 0 auto; background: var(--bg);
   min-height: 100vh; position: relative; overflow-x: hidden;
   font-family: Inter, system-ui, sans-serif; color: var(--ink);
-  font-size: 15px; line-height: 1.5;
+  font-size: 15px; line-height: 1.5; color-scheme: light;
 }
 .m-app *, .m-app *::before, .m-app *::after {
   box-sizing: border-box; margin: 0; -webkit-tap-highlight-color: transparent;
@@ -73,50 +73,51 @@
 .m-app .btn.gold { background: var(--gold); color: #0a0a0a; }
 .m-app.m-prod .btn { height: 48px; padding: 0 24px; }
 .m-app .g48 svg {
-  flex: none; width: 22px; height: 22px; stroke: var(--gold);
+  flex: none; width: 22px; height: 22px; stroke: #6f5409;
   fill: none; stroke-width: 1.8; margin-top: 1px;
 }
 .m-app.m-home .g48 {
   display: flex; gap: 10px; align-items: flex-start;
-  border: 1px solid rgba(212, 175, 55, .45); background: rgba(212, 175, 55, .1);
-  border-radius: 14px; padding: 12px 14px; color: var(--gold);
+  border: 1px solid rgba(212, 175, 55, .6); background: rgba(212, 175, 55, .16);
+  border-radius: 14px; padding: 12px 14px; color: #6f5409;
   font-weight: 600; font-size: 14px; position: relative;
 }
 .m-app.m-prod .g48 {
   display: flex; gap: 10px; align-items: flex-start; margin-top: 18px;
-  padding: 14px; border-radius: 14px; background: #0a0a0a;
-  color: var(--gold); font-weight: 600; font-size: 14px;
+  padding: 14px; border-radius: 14px; background: rgba(212, 175, 55, .14);
+  border: 1px solid rgba(212, 175, 55, .5);
+  color: #6f5409; font-weight: 600; font-size: 14px;
 }
 .m-app.m-prod .g48 svg { margin-top: 0; }
 
 /* ---------- home ---------- */
 .m-app.m-home .hero {
-  background: var(--black); color: #fff; padding: 36px 20px 28px;
-  position: relative; overflow: hidden;
+  background: linear-gradient(180deg, #f8f1dc, #fafaf8); color: var(--ink);
+  padding: 36px 20px 28px; position: relative; overflow: hidden;
 }
 .m-app.m-home .coil {
   position: absolute; right: -70px; top: -40px; width: 230px; height: 230px;
-  border-radius: 50%; border: 34px solid #4a2c19; opacity: .8;
+  border-radius: 50%; border: 34px solid #d8b97a; opacity: .55;
 }
 .m-app.m-home .coil::after {
   content: ""; position: absolute; inset: -18px; border-radius: 50%;
   border: 2px dashed var(--gold); opacity: .7;
 }
 .m-app.m-home .hero small {
-  display: block; color: var(--gold); font-size: 13px; font-weight: 500;
+  display: block; color: #7a5d0c; font-size: 13px; font-weight: 600;
   margin-bottom: 12px; position: relative;
 }
 .m-app.m-home .hero h1 { font-size: 38px; line-height: 1.12; position: relative; max-width: 300px; }
-.m-app.m-home .hero p { color: #bdbdbd; margin: 14px 0 18px; position: relative; }
+.m-app.m-home .hero p { color: var(--muted); margin: 14px 0 18px; position: relative; }
 .m-app.m-home .btns { display: grid; gap: 10px; margin: 18px 0 22px; }
-.m-app.m-home .btn.ghost { border: 1px solid rgba(255, 255, 255, .4); color: #fff; }
+.m-app.m-home .btn.ghost { border: 1px solid var(--ink); color: var(--ink); }
 .m-app.m-home .stats {
   display: flex; justify-content: space-between;
-  border-top: 1px solid rgba(255, 255, 255, .14); padding-top: 16px;
+  border-top: 1px solid var(--line); padding-top: 16px;
 }
 .m-app.m-home .stats div { font-family: Cinzel, serif; font-size: 20px; }
 .m-app.m-home .stats span {
-  display: block; font-family: Inter, sans-serif; font-size: 12px; color: #a8a8a8;
+  display: block; font-family: Inter, sans-serif; font-size: 12px; color: var(--muted);
 }
 .m-app .chips {
   display: flex; gap: 10px; overflow-x: auto; padding: 16px; scrollbar-width: none;
@@ -134,24 +135,20 @@
 .m-app .sh a { color: var(--goldd); font-weight: 600; font-size: 14px; }
 .m-app .cats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .m-app .cat {
-  height: 190px; border-radius: 18px; background: linear-gradient(180deg, #2b2520, #0a0a0a);
-  color: #fff; padding: 16px; display: flex; flex-direction: column;
-  justify-content: flex-end; position: relative; overflow: hidden;
-}
-.m-app .cat img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.m-app .cat::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 35%, rgba(0, 0, 0, .78));
+  height: 190px; border-radius: 18px; background: linear-gradient(180deg, #f6efdc, #e4dfd6);
+  border: 1px solid var(--line); color: var(--ink); padding: 16px;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  position: relative; overflow: hidden;
 }
 .m-app .cat::before {
   content: ""; position: absolute; top: 18px; right: -26px; width: 110px; height: 110px;
-  border-radius: 50%; border: 16px solid rgba(212, 175, 55, .28); z-index: 1;
+  border-radius: 50%; border: 16px solid rgba(168, 132, 26, .35);
 }
 .m-app .cat.w::before {
   border-radius: 14px; width: 96px; height: 68px; border-width: 2px; top: 30px;
 }
-.m-app .cat h3 { font-size: 20px; position: relative; z-index: 1; }
-.m-app .cat span { color: var(--gold); font-size: 13px; font-weight: 600; position: relative; z-index: 1; }
+.m-app .cat h3 { font-size: 20px; }
+.m-app .cat span { color: #7a5d0c; font-size: 13px; font-weight: 600; }
 .m-app .pills { display: flex; gap: 8px; margin-bottom: 14px; }
 .m-app .pill {
   height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line);
@@ -188,11 +185,11 @@
 }
 .m-app .add:active { transform: scale(.97); }
 .m-app .band {
-  margin: 28px 16px 0; background: var(--black); color: #fff;
-  border-radius: 22px; padding: 24px 20px;
+  margin: 28px 16px 0; background: #f6efdc; border: 1px solid rgba(212, 175, 55, .5);
+  color: var(--ink); border-radius: 22px; padding: 24px 20px;
 }
 .m-app .band h2 { font-size: 23px; line-height: 1.3; margin-bottom: 10px; }
-.m-app .band p { color: #b5b5b5; font-size: 14px; margin-bottom: 16px; }
+.m-app .band p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
 .m-app .rv {
   display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
   margin: 0 -16px; padding: 0 16px 6px; scrollbar-width: none;
@@ -205,12 +202,12 @@
 .m-app .rc q { display: block; margin: 8px 0 12px; color: var(--ink); font-size: 14.5px; quotes: "“" "”"; }
 .m-app .rc .st { color: var(--gold); letter-spacing: 3px; }
 .m-app .rc span { color: var(--muted); font-size: 13px; }
-.m-app .nl { margin: 28px 16px 0; border-radius: 22px; background: #1a1510; color: #fff; padding: 24px 20px; }
+.m-app .nl { margin: 28px 16px 0; border-radius: 22px; background: var(--surface); border: 1px solid var(--line); color: var(--ink); padding: 24px 20px; }
 .m-app .nl h2 { font-size: 23px; line-height: 1.3; }
-.m-app .nl p { color: #b5b5b5; font-size: 14px; margin: 8px 0 16px; }
+.m-app .nl p { color: var(--muted); font-size: 14px; margin: 8px 0 16px; }
 .m-app .nl input {
-  width: 100%; height: 50px; border-radius: 999px; border: 1px solid #3a342c;
-  background: #241e17; color: #fff; padding: 0 20px; font: inherit; margin-bottom: 10px;
+  width: 100%; height: 50px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--bg); color: var(--ink); padding: 0 20px; font: inherit; margin-bottom: 10px;
 }
 .m-app .nl .btn { width: 100%; }
 .m-app.m-home footer { padding: 28px 16px 8px; }
@@ -377,13 +374,6 @@
 }
 .m-app .buy .wa svg { width: 26px; height: 26px; fill: #fff; }
 
-/* ---------- dark mode (artifact behavior) ---------- */
-@media (prefers-color-scheme: dark) {
-  .m-app {
-    --bg: #0f0e0d; --surface: #1a1816; --ink: #f3f0ea; --muted: #a09a90;
-    --line: #2c2926; --goldd: #d4af37; --beige: #2a2622;
-  }
-}
 @media (prefers-reduced-motion: reduce) {
   .m-app * { transition: none !important; scroll-behavior: auto !important; }
 }

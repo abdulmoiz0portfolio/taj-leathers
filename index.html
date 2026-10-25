@@ -224,7 +224,7 @@ function homeNews(e) {
   window.mSetFilter = f => { mFilter = f; renderGrid(); };
   window.mClaim = () => { const r = setPromo("WELCOME10"); toast(r.msg); };
   root.innerHTML = `
-  <div class="ann">Free delivery over Rs 8,000 · Code WELCOME10: 10% off</div>
+  <div class="ann">Free delivery on orders over Rs 8,000</div>
   <header>
     <a class="logo" href="#m-top" aria-label="Taj Leathers home">TAJ <b>LEATHERS</b></a>
     <div class="ic">
@@ -251,8 +251,8 @@ function homeNews(e) {
   <section>
     <div class="sh"><h2>Shop by category</h2></div>
     <div class="cats">
-      <a class="cat" href="category.html?section=leathers&cat=belts"><img src="assets/img/light/p6-belt-07-v2.webp" alt="Belts"><h3>Belts</h3><span>Cut to last a lifetime</span></a>
-      <a class="cat w" href="category.html?section=leathers&cat=wallets"><img src="assets/img/light/taj-wallet-1-closed-light.webp" alt="Wallets"><h3>Wallets</h3><span>Carry less, keep more</span></a>
+      <a class="cat" href="category.html?section=leathers&cat=belts"><h3>Belts</h3><span>Cut to last a lifetime</span></a>
+      <a class="cat w" href="category.html?section=leathers&cat=wallets"><h3>Wallets</h3><span>Carry less, keep more</span></a>
     </div>
   </section>
   <section id="m-best">
