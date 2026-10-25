@@ -27,50 +27,26 @@
   100% { transform: translateX(120%); }
 }
 
-/* ---------- Global product carousel (mobile + tablet only) ----------
-   Reusable component: add class "product-carousel" to any section that
-   renders a list of products. Below the lg breakpoint it becomes a
-   horizontal swipe strip with mandatory snap, hidden scrollbars and a
-   peeking next card. On desktop (lg and up) it does nothing, so the
-   normal grid layout stays untouched.
-   Universality: any container whose direct children are product cards
-   (class "product-card", added by productCard() in store.js) gets the
-   same treatment automatically, including future product sections. */
-@media (max-width: 1023.5px) {
-  .product-carousel,
-  div:has(> .product-card) {
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    gap: 1rem;
-    /* top room for the card hover lift, right = peeking edge padding,
-       bottom room for card shadows */
-    padding: 0.25rem 1rem 1rem 0;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .product-carousel::-webkit-scrollbar,
-  div:has(> .product-card)::-webkit-scrollbar {
-    display: none;
-  }
-  .product-carousel > *,
-  div:has(> .product-card) > * {
-    flex: 0 0 auto;
-    scroll-snap-align: start;
-    /* narrower than the track so the next card peeks in from the right */
-    width: 80%;
-    max-width: 340px;
-  }
+/* ---------- Single-product gallery strip ----------
+   The ONLY horizontal swipe area on the site: the featured image on the
+   product details page. One full image per slide, mandatory snap, hidden
+   scrollbars. All product lists (home, leathers, category, related,
+   wishlist) stay standard vertical grids. */
+.gal-strip {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-/* Tablet: two cards + a peek of the third */
-@media (min-width: 640px) and (max-width: 1023.5px) {
-  .product-carousel > *,
-  div:has(> .product-card) > * {
-    width: 46%;
-    max-width: none;
-  }
+.gal-strip::-webkit-scrollbar {
+  display: none;
+}
+.gal-slide {
+  flex: 0 0 auto;
+  width: 100%;
+  scroll-snap-align: start;
 }

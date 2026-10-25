@@ -50,7 +50,7 @@
 
 <section class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
   <h2 class="font-serif text-2xl sm:text-3xl text-[#000000] mb-8">You may also like</h2>
-  <div id="related" class="product-carousel grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+  <div id="related" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
 </section>
 
 <div id="site-footer"></div>
@@ -100,7 +100,9 @@ function paint() {
   const curGal = getActiveGallery();
   document.getElementById("product-wrap").innerHTML = `
     <div class="relative rounded-3xl overflow-hidden bg-[#fafafa] border border-black/5">
-      <img id="p-main-img" src="assets/img/${activeImg}" alt="${p.name}" class="w-full aspect-square object-cover">
+      <div id="gal-strip" class="gal-strip">${(curGal.length ? curGal : [activeImg]).map(g =>
+        `<div class="gal-slide"><img src="assets/img/${g}" alt="${p.name}" class="w-full aspect-square object-cover"></div>`
+      ).join("")}</div>
       ${curGal.length > 1 ? `<div class="flex gap-2 mt-3 overflow-x-auto pb-1">` + curGal.map((g,i) =>
         `<img src="assets/img/${g}" onclick="switchMainImg('${g}')" class="gal-thumb w-16 h-16 object-cover rounded-lg cursor-pointer ring-2 ${g===activeImg?'ring-[#D4AF37]':'ring-transparent'} hover:ring-[#D4AF37] transition shrink-0">`
       ).join("") + `</div>` : ""}
@@ -149,6 +151,48 @@ function paint() {
           : acc("Lifetime Warranty", "If the stitching, buckle or hardware ever fails under normal use, we repair or replace it free — for life. 7-day easy exchange for unused items.")}
       </div>
     </div>`;
+  galSyncStrip();
+  galInitStrip();
+}
+/* ---------- featured-image gallery strip (swipe + thumbnail sync) ---------- */
+function galList() {
+  const g = getActiveGallery();
+  return g.length ? g : [activeImg];
+}
+function galActiveIndex() {
+  const i = galList().indexOf(activeImg);
+  return i < 0 ? 0 : i;
+}
+function galPaintThumbs(idx) {
+  document.querySelectorAll(".gal-thumb").forEach((t, i) => {
+    t.classList.toggle("ring-[#D4AF37]", i === idx);
+    t.classList.toggle("ring-transparent", i !== idx);
+  });
+}
+function galSyncStrip() {
+  const strip = document.getElementById("gal-strip");
+  if (!strip) return;
+  strip.scrollLeft = galActiveIndex() * strip.clientWidth;
+  galPaintThumbs(galActiveIndex());
+}
+function galInitStrip() {
+  const strip = document.getElementById("gal-strip");
+  if (!strip || strip._galInit) return;
+  strip._galInit = true;
+  let t;
+  strip.addEventListener("scroll", () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      const w = strip.clientWidth;
+      if (!w) return;
+      const idx = Math.min(Math.round(strip.scrollLeft / w), strip.children.length - 1);
+      const gal = galList();
+      if (gal[idx] && gal[idx] !== activeImg) {
+        activeImg = gal[idx];
+        galPaintThumbs(idx);
+      }
+    }, 90);
+  });
 }
 function switchMainImg(src) {
   activeImg = src;
