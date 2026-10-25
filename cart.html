@@ -110,6 +110,6 @@ function render() {
 render();
 </script>
 <!-- Agentation Visual Feedback & Annotation Toolbar -->
-<script src="assets/js/agentation-widget.js" defer></script>
+<script>(function(){try{var p=new URLSearchParams(location.search);if(p.has("edit")||p.has("dev")||p.has("agentation")||location.hash.indexOf("edit")>-1||location.search.indexOf("edit")>-1||sessionStorage.getItem("agentation_active")==="true"){var s=document.createElement("script");s.src="assets/js/agentation-widget.js";s.defer=true;document.head.appendChild(s);}}catch(e){}})();</script>
 </body>
 </html>
