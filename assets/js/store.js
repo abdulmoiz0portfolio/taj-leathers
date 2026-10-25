@@ -217,7 +217,7 @@ function toast(msg) {
 /* ---------- shared chrome ---------- */
 function renderChrome(active = "") {
   const nav = (href, label, key) =>
-    `<a href="${href}" class="hover:text-[#D4AF37] transition ${active === key ? "text-[#D4AF37]" : "text-[#262626]"}">${label}</a>`;
+    `<a href="${href}" class="hover:text-[#D4AF37] transition ${active === key ? "text-[#8A6D1A]" : "text-[#262626]"}">${label}</a>`;
   const searchIcon = `<button onclick="openSearch()" aria-label="Search" class="text-[#262626] hover:text-[#D4AF37] transition">
       <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z"/></svg></button>`;
   const wishIcon = `<a href="wishlist.html" aria-label="Wishlist" class="relative text-[#262626] hover:text-[#D4AF37] transition">
