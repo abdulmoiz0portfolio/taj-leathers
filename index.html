@@ -149,20 +149,6 @@
   </div>
 </section>
 
-<!-- NEWSLETTER -->
-<section class="desk-sec reveal">
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
-    <p class="text-[#D4AF37] uppercase tracking-[0.3em] text-xs mb-4">Newsletter</p>
-    <h2 class="font-serif text-3xl sm:text-4xl text-[#000000] mb-3">Join the Inner Circle</h2>
-    <p class="text-[#525252] mb-8">New drops, limited editions and member-only offers — plus <strong class="text-[#000000]">10% off</strong> your first order when you join.</p>
-    <form id="home-news" class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="return homeNews(event)">
-      <input type="email" required placeholder="Your email address" class="flex-1 bg-[#fafafa] border border-black/10 rounded-full px-5 py-3 text-sm focus:outline-none focus:border-[#D4AF37]">
-      <button class="bg-[#000000] text-black font-semibold px-7 py-3 rounded-full hover:bg-[#D4AF37] transition whitespace-nowrap">Subscribe</button>
-    </form>
-    <p id="home-news-ok" class="hidden text-[#D4AF37] text-sm mt-4 font-medium">Welcome to the circle! Use code <strong>WELCOME10</strong> at checkout.</p>
-  </div>
-</section>
-
 <div id="site-footer"></div>
 <div class="m-app m-home" id="m-home"></div>
 <script src="assets/js/products.js"></script>
@@ -186,12 +172,6 @@ renderChrome("gateway");
   }), { threshold: 0.12 });
   document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 })();
-function homeNews(e) {
-  e.preventDefault();
-  document.getElementById("home-news-ok").classList.remove("hidden");
-  document.getElementById("home-news").reset();
-  return false;
-}
 </script>
 <script>
 /* ---------- mobile home UI (phones only, artifact design + real data) ---------- */
@@ -226,7 +206,6 @@ function homeNews(e) {
       b.setAttribute("aria-pressed", String(b.dataset.f === mFilter)));
   }
   window.mSetFilter = f => { mFilter = f; renderGrid(); };
-  window.mClaim = () => { const r = setPromo("WELCOME10"); toast(r.msg); };
   root.innerHTML = `
   <div class="ann">Free delivery on orders over Rs 8,000</div>
   <header>
@@ -280,12 +259,6 @@ function homeNews(e) {
       <div class="rc"><div class="st">★★★★★</div><q>Ordered the Executive Bifold on COD. Delivery took 3 days, stitching is perfect, and it still looks new after two months in my back pocket daily.</q><span><b>Bilal K.</b> · Karachi</span></div>
     </div>
   </section>
-  <div class="nl">
-    <h2>Get 10% off your first order.</h2>
-    <p>Early access to limited runs and workshop stories. One email a week, no spam.</p>
-    <input type="email" placeholder="Your email address" aria-label="Email address">
-    <button class="btn gold" onclick="mClaim()">Claim 10% off</button>
-  </div>
   <footer>
     <details><summary>Shop</summary><a href="leathers.html">Shop all</a><a href="category.html?section=leathers&cat=belts">Belts</a><a href="category.html?section=leathers&cat=wallets">Wallets</a></details>
     <details><summary>Help</summary><a href="track.html">Track your order</a><a href="wishlist.html">Wishlist</a><a href="about.html">About us</a><a href="contact.html">Contact us</a></details>

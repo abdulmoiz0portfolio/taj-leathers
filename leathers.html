@@ -157,24 +157,6 @@
   </div>
 </section>
 
-<!-- NEWSLETTER -->
-<section class="max-w-7xl mx-auto px-4 sm:px-6 pb-4">
-  <div class="relative rounded-3xl overflow-hidden bg-[#000000]">
-    <img src="assets/img/detail.webp" alt="Leather detail" class="absolute inset-0 w-full h-full object-cover opacity-25">
-    <div class="absolute inset-0 bg-gradient-to-r from-[#000000] via-[#000000]/80 to-transparent"></div>
-    <div class="relative px-6 sm:px-12 py-16 sm:py-20 max-w-2xl">
-      <p class="text-[#D4AF37] uppercase tracking-[0.25em] text-xs mb-3">Inner Circle</p>
-      <h2 class="font-serif text-3xl sm:text-5xl text-white mb-4 leading-tight">Get 10% off your first order.</h2>
-      <p class="text-gray-300 mb-8 text-sm sm:text-base leading-relaxed">Plus early access to limited runs and workshop stories. One email a week — no spam, ever.</p>
-      <form id="newsletter-form" class="flex flex-col sm:flex-row gap-3">
-        <input type="email" required placeholder="Your email address" class="flex-1 bg-white/10 border border-white/20 rounded-full px-6 py-3.5 text-white placeholder-gray-400 focus:outline-none focus:border-[#D4AF37] focus:bg-white/15 transition">
-        <button class="bg-[#D4AF37] text-black font-semibold px-8 py-3.5 rounded-full hover:bg-[#B8860B] transition whitespace-nowrap">Claim 10% Off</button>
-      </form>
-      <p id="newsletter-ok" class="hidden text-[#D4AF37] mt-4 text-sm font-medium">Welcome to the Inner Circle — check your inbox for 10% off.</p>
-    </div>
-  </div>
-</section>
-
 <div id="site-footer"></div>
 <script src="assets/js/products.js"></script>
 <script src="assets/js/store.js"></script>
@@ -196,14 +178,6 @@ function renderLeatherGrids() {
 }
 renderLeatherGrids();
 document.addEventListener("taj:catalog-updated", renderLeatherGrids);
-document.getElementById("newsletter-form").addEventListener("submit", e => {
-  e.preventDefault();
-  e.target.classList.add("hidden");
-  const ok = document.getElementById("newsletter-ok");
-  ok.innerHTML = 'Welcome to the Inner Circle — use code <strong class="text-black bg-[#D4AF37] px-2 py-0.5 rounded">WELCOME10</strong> for 10% off your first order.';
-  ok.classList.remove("hidden");
-  toast("Code WELCOME10 unlocked — 10% off!");
-});
 </script>
 <!-- Agentation Visual Feedback & Annotation Toolbar -->
 <script>(function(){try{var p=new URLSearchParams(location.search);if(p.has("edit")||p.has("dev")||p.has("agentation")||location.hash.indexOf("edit")>-1||location.search.indexOf("edit")>-1||sessionStorage.getItem("agentation_active")==="true"){var s=document.createElement("script");s.src="assets/js/agentation-widget.js";s.defer=true;document.head.appendChild(s);}}catch(e){}})();</script>
