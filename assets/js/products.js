@@ -65,7 +65,7 @@ const LEATHER_PRODUCTS = [
 
   { id: "wallet-onyx-zip", name: "Bifold Wallet with Inner Zip", cat: "wallets",
     price: 1300, oldPrice: 2000, img: "light/taj-wallet3-black-box-light.webp",
-    gallery: ["light/taj-wallet3-black-box-light.webp","light/p3-closed-vertical-light.webp","light/p3-open-flat-exterior-light.webp"],
+    gallery: ["light/taj-wallet3-black-box-light.webp","light/p3-closed-vertical-light.webp","light/p3-open-flat-exterior-light.webp","light/p3-zip-interior-light.webp"],
     colors: ["Jet Black"], sizes: ["Standard"],
     badge: "-35%",
     desc: "Jet-black bifold with a center zip compartment — coins and small essentials stay put, everything else stays slim.",
