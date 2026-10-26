@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Product — TAJ LEATHERS</title>
+<meta name="description" content="TAJ LEATHERS — premium handcrafted leather belts and wallets. Full-grain leather, lifetime warranty, cash on delivery across Pakistan.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TAJ LEATHERS">
 <meta property="og:title" content="TAJ LEATHERS — Handcrafted Leather Goods">
@@ -70,6 +71,7 @@ document.title = p.name + " — " + SECTIONS[p.section].name;
   const set = (sel, attr, val) => { const el = document.querySelector(sel); if (el) el.setAttribute(attr, val); };
   const img = "https://tajleathers.pk/assets/img/" + p.img;
   const url = "https://tajleathers.pk/product.html?section=" + p.section + "&id=" + p.id;
+  set('meta[name="description"]', "content", p.desc);
   set('meta[property="og:title"]', "content", p.name + " — TAJ LEATHERS");
   set('meta[property="og:description"]', "content", p.desc);
   set('meta[property="og:image"]', "content", img);
@@ -77,6 +79,14 @@ document.title = p.name + " — " + SECTIONS[p.section].name;
   set('meta[name="twitter:title"]', "content", p.name + " — TAJ LEATHERS");
   set('meta[name="twitter:description"]', "content", p.desc);
   set('meta[name="twitter:image"]', "content", img);
+  try {
+    const schema = { "@context": "https://schema.org", "@type": "Product", "name": p.name,
+      "image": img, "description": p.desc, "brand": { "@type": "Brand", "name": "TAJ LEATHERS" },
+      "offers": { "@type": "Offer", "url": url, "priceCurrency": "PKR", "price": p.price, "availability": "https://schema.org/InStock" } };
+    try { const r = avgRating(p.id); if (r && r.count > 0) schema.aggregateRating = { "@type": "AggregateRating", "ratingValue": r.avg, "reviewCount": r.count }; } catch (e) {}
+    let el = document.getElementById("product-ld"); if (!el) { el = document.createElement("script"); el.id = "product-ld"; el.type = "application/ld+json"; document.head.appendChild(el); }
+    el.textContent = JSON.stringify(schema);
+  } catch (e) {}
   set('link[rel="canonical"]', "href", url);
 })();
 document.querySelector('a[href="category.html"]').href = "category.html?section=" + p.section;
@@ -310,7 +320,7 @@ function paintMobile() {
   ).join("")}</div>
   <div class="info">
     <small>${CATS[p.cat].name}</small>
-    <h1>${p.name}</h1>
+    <h2>${p.name}</h2>
     <div class="price"><b>${fmt(p.price)}</b>${p.oldPrice > p.price ? `<s>${fmt(p.oldPrice)}</s><span class="save">Save ${fmt(p.oldPrice - p.price)}</span>` : ""}</div>
     <div class="rate">${r.count ? starsHTML(r.avg, r.count) + ` <span>${r.count} review${r.count > 1 ? "s" : ""}</span>` : "No reviews yet — be the first"}</div>
     <p class="desc">${p.desc}</p>
