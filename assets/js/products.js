@@ -72,6 +72,13 @@ const LEATHER_PRODUCTS = [
     badge: "-35%",
     desc: "Jet-black bifold with a center zip compartment — coins and small essentials stay put, everything else stays slim.",
     details: ["Smooth genuine leather exterior", "Center zip coin compartment", "Multiple card slots + note compartments", "Classic bifold fold"] },
+  { id: "wallet-croc-black", name: "Black crocodile cow leather wallet", cat: "wallets",
+    price: 1500, oldPrice: 2000, img: "light/wallet-croc-black-box.webp",
+    gallery: ["light/wallet-croc-black-box.webp","light/wallet-croc-black-front.webp","light/wallet-croc-black-open.webp","light/wallet-croc-black-angle.webp"],
+    colors: ["Black"], sizes: ["Standard"],
+    badge: "-25%",
+    desc: "Genuine cow leather with a bold crocodile emboss. Slim in the pocket, roomy where it counts — cards, notes, and nothing extra.",
+    details: ["Genuine cow leather with crocodile emboss", "Multiple card slots + note compartment", "Hand-stitched edges", "Classic slim bifold profile"] },
 ];
 
 
