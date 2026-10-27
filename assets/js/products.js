@@ -53,7 +53,7 @@ const LEATHER_PRODUCTS = [
   { id: "wallet-twotone", name: "Brown & Black Two-Tone Wallet", cat: "wallets",
     price: 1500, oldPrice: 2000, img: "light/p5-30058-light.webp",
     gallery: ["light/p5-30101-light.webp","light/taj-wallet5-twotone-light.webp","light/p5-30059-light.webp","light/p5-30058-light.webp"],
-    colors: ["Black", "Dark Brown"], sizes: ["Standard"],
+    colors: ["Brown"], sizes: ["Standard"],
     badge: "-25%",
     desc: "Black meets dark brown pebbled leather — a two-tone bifold with real character. The grain does the talking; the stitching keeps it together for years.",
     details: ["Pebbled genuine leather, two-tone panels", "Multiple card slots + note compartments", "Hand-stitched edges", "Classic bifold fold"] },

@@ -206,9 +206,9 @@
             <span class="text-[#737373] line-through">${fmt(p.oldPrice)}</span>
           </div>
           <p class="text-sm text-[#525252] leading-relaxed mt-3">${p.desc}</p>
-          <div class="mt-4"><p class="text-xs text-[#525252] mb-2">Color</p>
+          ${p.colors.length > 1 ? `<div class="mt-4"><p class="text-xs text-[#525252] mb-2">Color</p>
             <div class="flex flex-wrap gap-2" id="qv-colors">${p.colors.map((c, i) =>
-              `<button onclick="qvPick('c','${c}')" data-qv="c" data-v="${c}" class="px-4 py-2 rounded-full text-sm border transition ${i === 0 ? "bg-[#D4AF37] text-white border-[#D4AF37] font-semibold" : "border-black/20 text-[#262626] hover:border-[#D4AF37]"}">${c}</button>`).join("")}</div></div>
+              `<button onclick="qvPick('c','${c}')" data-qv="c" data-v="${c}" class="px-4 py-2 rounded-full text-sm border transition ${i === 0 ? "bg-[#D4AF37] text-white border-[#D4AF37] font-semibold" : "border-black/20 text-[#262626] hover:border-[#D4AF37]"}">${c}</button>`).join("")}</div></div>` : ""}
           <div class="mt-3"><p class="text-xs text-[#525252] mb-2">${"Size"}</p>
             <div class="flex flex-wrap gap-2" id="qv-sizes">${p.sizes.map((s, i) =>
               `<button onclick="qvPick('s','${s}')" data-qv="s" data-v="${s}" class="px-4 py-2 rounded-full text-sm border transition ${i === 0 ? "bg-[#D4AF37] text-white border-[#D4AF37] font-semibold" : "border-black/20 text-[#262626] hover:border-[#D4AF37]"}">${s}</button>`).join("")}</div></div>

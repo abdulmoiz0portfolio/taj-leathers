@@ -138,8 +138,8 @@ function paint() {
         <span class="w-10 h-10 rounded-full bg-[#D4AF37]/15 flex items-center justify-center text-[#D4AF37] text-lg group-hover:scale-110 transition">◈</span>
         <span class="text-left"><span class="block text-white font-semibold text-sm">Explore in 3D</span><span class="block text-stone-400 text-xs">Scroll-driven interactive showcase →</span></span>
       </a>` : ""}
-      <div class="mb-5"><p class="text-sm text-[#525252] mb-2.5">Color: <span class="text-[#000000]">${selColor}</span></p>
-        <div class="flex flex-wrap gap-2">${optBtn(p.colors, selColor, "setColor")}</div></div>
+      ${p.colors.length > 1 ? `<div class="mb-5"><p class="text-sm text-[#525252] mb-2.5">Color: <span class="text-[#000000]">${selColor}</span></p>
+        <div class="flex flex-wrap gap-2">${optBtn(p.colors, selColor, "setColor")}</div></div>` : ""}
       <div class="mb-7"><p class="text-sm text-[#525252] mb-2.5">${"Size"}: <span class="text-[#000000]">${selSize}</span></p>
         <div class="flex flex-wrap gap-2">${optBtn(p.sizes, selSize, "setSize")}</div></div>
       <div class="flex flex-wrap items-center gap-3 sm:flex-nowrap sm:gap-4 mb-8">
@@ -329,7 +329,7 @@ function paintMobile() {
       <div class="perk"><i>Lifetime</i>Warranty</div>
       <div class="perk"><i>COD</i>Nationwide</div>
     </div>
-    <div class="opt"><label>Color: <b>${selColor}</b></label><div class="sw">${mOptBtn(p.colors, selColor, "setColor")}</div></div>
+    ${p.colors.length > 1 ? `<div class="opt"><label>Color: <b>${selColor}</b></label><div class="sw">${mOptBtn(p.colors, selColor, "setColor")}</div></div>` : ""}
     <div class="opt"><label>Size: <b>${selSize}</b></label><div class="sw">${mOptBtn(p.sizes, selSize, "setSize")}</div></div>
     <div class="opt"><label>Quantity</label><div class="qty"><button onclick="chQty(-1)" aria-label="Decrease">−</button><span>${qty}</span><button onclick="chQty(1)" aria-label="Increase">+</button></div></div>
     <div class="g48"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>If your order isn’t delivered in Karachi within 48 hours, your entire shopping is FREE.</span></div>
