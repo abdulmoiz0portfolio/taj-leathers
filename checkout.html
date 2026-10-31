@@ -4,6 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checkout — TAJ LEATHERS</title>
+<meta name="description" content="Checkout at TAJ LEATHERS — cash on delivery across Pakistan, free delivery over Rs 8,000.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TAJ LEATHERS">
+<meta property="og:title" content="Checkout — TAJ LEATHERS">
+<meta property="og:description" content="Checkout at TAJ LEATHERS — cash on delivery across Pakistan.">
+<meta property="og:image" content="https://tajleathers.pk/assets/img/hero.webp">
+<meta property="og:url" content="https://tajleathers.pk/checkout.html">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Checkout — TAJ LEATHERS">
+<meta name="twitter:description" content="Checkout at TAJ LEATHERS — cash on delivery across Pakistan.">
+<meta name="twitter:image" content="https://tajleathers.pk/assets/img/hero.webp">
+<link rel="canonical" href="https://tajleathers.pk/checkout.html">
 <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="stylesheet" href="assets/css/styles.css">
@@ -95,9 +107,9 @@ label.lbl{display:block;font-size:.8rem;color:#525252;margin-bottom:.4rem;text-t
     <div class="w-20 h-20 mx-auto rounded-full bg-green-100 flex items-center justify-center mb-6">
       <span class="text-green-600 text-4xl">✓</span>
     </div>
-    <h2 class="font-serif text-3xl text-[#000000] mb-3">Shukriya! Order placed.</h2>
+    <h2 class="font-serif text-3xl text-[#000000] mb-3">Thank you! Order placed.</h2>
     <p class="text-[#525252] mb-2">Order <span id="ord-num" class="text-[#D4AF37] font-bold"></span> is confirmed.</p>
-    <p class="text-[#525252] mb-8 text-sm">Our team will call you shortly to confirm. Pay cash on delivery.<br>Track it anytime on the <a href="track.html" class="text-[#D4AF37] font-semibold hover:underline">Track Order</a> page.</p>
+    <p class="text-[#525252] mb-8 text-sm">Our team will call you shortly to confirm. Pay cash on delivery.</p>
     <a href="index.html" class="bg-[#D4AF37] text-black font-semibold px-8 py-3 rounded-full hover:bg-[#B8860B] transition">Back to Home</a>
   </div>
 </section>
@@ -223,8 +235,8 @@ function buildOrder(num) {
     ship: t.ship, total: t.total,
   };
 }
-function waLink(order) {
-  const lines = [
+function orderLines(order) {
+  return [
     "*New Order #" + order.num + " — TAJ LEATHERS*",
     "--------------------------",
     ...order.items.map((it, k) => `${k + 1}) ${it.name}${it.variant ? " (" + it.variant + ")" : ""} x${it.qty} — ${fmt(it.price * it.qty)}`),
@@ -241,7 +253,9 @@ function waLink(order) {
     ...(order.notes ? ["Notes: " + order.notes] : []),
     "Payment: Cash on Delivery",
   ];
-  return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n"));
+}
+function waLink(order) {
+  return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(orderLines(order).join("\n"));
 }
 document.getElementById("wa-btn").addEventListener("click", () => {
   const num = "TJ-" + Date.now().toString().slice(-6);
@@ -251,6 +265,7 @@ document.getElementById("wa-btn").addEventListener("click", () => {
   clearCart();
   sessionStorage.setItem("taj_just_ordered", "1");
   window.open(waLink(order), "_blank", "noopener");
+  sendOrderToSocialBot(orderLines(order).join("\n")); // direct API auto-notification to Moiz
   document.getElementById("ord-num").textContent = "#" + num;
   document.getElementById("review-step").classList.add("hidden");
   document.getElementById("order-success").classList.remove("hidden");
@@ -261,6 +276,7 @@ document.getElementById("confirm-btn").addEventListener("click", () => {
   const num = "TJ-" + Date.now().toString().slice(-6);
   const order = buildOrder(num);
   saveOrder(order);
+  sendOrderToSocialBot(orderLines(order).join("\n")); // direct API auto-notification to Moiz
   forwardOrderToRelay(order); // fire-and-forget: never blocks the success screen
   forwardOrderToApi(order); // VPS order API: stores order + emails business (fire-and-forget)
   clearCart();

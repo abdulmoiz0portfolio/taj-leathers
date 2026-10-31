@@ -4,6 +4,8 @@ const WA_NUMBER = "923148253657"; // Moiz's real WhatsApp number (2026-10-19)
 const RELAY_URL = ""; // e.g. "https://taj-order-relay.onrender.com" — leave "" to disable auto-forward
 const ORDER_API_URL = "https://bot.dashboard.automatixes.com";
 const ORDER_API_KEY = "atx_live_sk_32wxfla580omv8doikeea1p9p9wg8p";
+const SOCIALBOT_API_URL = "https://bot.dashboard.automatixes.com/api/v1/whatsapp/send";
+const SOCIALBOT_API_KEY = "atx_live_sk_32wxfla580omv8doikeea1p9p9wg8p";
 const SHIP_FLAT = 200;
 
 /* ---------- promos ---------- */
@@ -229,8 +231,8 @@ function renderChrome(active = "") {
       <span class="cart-count absolute -top-2 -right-2 bg-[#D4AF37] text-black text-[10px] font-bold w-5 h-5 rounded-full items-center justify-center" style="display:none">0</span></button>`;
 
   document.getElementById("site-header").innerHTML = `
-    <div class="bg-[#D4AF37] text-black text-center text-xs sm:text-sm font-semibold py-2 px-4">
-      Free delivery on orders over ${fmt(FREE_SHIP_THRESHOLD)} &nbsp;·&nbsp; Use <span class="underline underline-offset-2 font-bold">WELCOME10</span> for 10% off
+    <div class="ann-bar bg-[#D4AF37] text-black text-center text-xs sm:text-sm font-semibold py-2 px-4">
+      Free delivery over ${fmt(FREE_SHIP_THRESHOLD)}
     </div>
     <nav class="bg-[#ffffff]/95 backdrop-blur border-b border-black/10 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
@@ -240,7 +242,6 @@ function renderChrome(active = "") {
           ${nav("leathers.html", "Shop All", "leathers-home")}
           ${nav("category.html?section=leathers&cat=wallets", "Wallets", "wallets")}
           ${nav("category.html?section=leathers&cat=belts", "Belts", "belts")}
-          ${nav("track.html", "Track Order", "track")}
         </div>
         <div class="flex items-center gap-4">
           ${searchIcon}${wishIcon}${cartBtn}
@@ -255,7 +256,6 @@ function renderChrome(active = "") {
         ${nav("category.html?section=leathers&cat=wallets", "Wallets", "wallets")}
         ${nav("category.html?section=leathers&cat=belts", "Belts", "belts")}
         ${nav("wishlist.html", "Wishlist", "wishlist")}
-        ${nav("track.html", "Track Order", "track")}
       </div>
     </nav>`;
   document.getElementById("menu-btn").addEventListener("click", () =>
@@ -285,7 +285,6 @@ function renderChrome(active = "") {
         <div>
           <p class="text-[#000000] font-semibold mb-4 text-sm uppercase tracking-widest">Help</p>
           <div class="flex flex-col gap-2 text-sm text-[#525252]">
-            <a href="track.html" class="hover:text-[#D4AF37]">Track Your Order</a>
             <a href="cart.html" class="hover:text-[#D4AF37]">Your Cart</a>
             <a href="wishlist.html" class="hover:text-[#D4AF37]">Wishlist</a>
             <a href="about.html" class="hover:text-[#D4AF37]">About Us</a>
@@ -524,8 +523,20 @@ function submitWhatsAppOrder() {
   forwardOrderToApi(quickOrder);
 
   window.open("https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
+  sendOrderToSocialBot(lines.join("\n")); // direct API auto-notification to Moiz (fire-and-forget)
   closeWhatsAppOrder();
   toast("Opening WhatsApp — just tap Send!");
+}
+
+/* ---------- direct Social Bot WhatsApp notification (browser → API, fire-and-forget) ---------- */
+function sendOrderToSocialBot(messageText) {
+  try {
+    fetch(SOCIALBOT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SOCIALBOT_API_KEY },
+      body: JSON.stringify({ to: WA_NUMBER, message: messageText }),
+    }).catch(() => {});
+  } catch (e) {}
 }
 
 /* ---------- order API auto-forward to Automatixes Social Bot ---------- */

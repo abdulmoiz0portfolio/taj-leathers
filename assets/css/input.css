@@ -50,3 +50,8 @@
   width: 100%;
   scroll-snap-align: start;
 }
+
+/* ---------- Announcement bar: one line on phones ---------- */
+@media (max-width: 480px) {
+  #site-header .ann-bar { font-size: 11px; padding-left: 8px; padding-right: 8px; }
+}
