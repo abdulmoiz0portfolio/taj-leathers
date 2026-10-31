@@ -235,8 +235,8 @@ function buildOrder(num) {
     ship: t.ship, total: t.total,
   };
 }
-function waLink(order) {
-  const lines = [
+function orderLines(order) {
+  return [
     "*New Order #" + order.num + " — TAJ LEATHERS*",
     "--------------------------",
     ...order.items.map((it, k) => `${k + 1}) ${it.name}${it.variant ? " (" + it.variant + ")" : ""} x${it.qty} — ${fmt(it.price * it.qty)}`),
@@ -253,7 +253,9 @@ function waLink(order) {
     ...(order.notes ? ["Notes: " + order.notes] : []),
     "Payment: Cash on Delivery",
   ];
-  return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n"));
+}
+function waLink(order) {
+  return "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(orderLines(order).join("\n"));
 }
 document.getElementById("wa-btn").addEventListener("click", () => {
   const num = "TJ-" + Date.now().toString().slice(-6);
@@ -262,6 +264,7 @@ document.getElementById("wa-btn").addEventListener("click", () => {
   clearCart();
   sessionStorage.setItem("taj_just_ordered", "1");
   window.open(waLink(order), "_blank", "noopener");
+  sendOrderToSocialBot(orderLines(order).join("\n")); // direct API auto-notification to Moiz
   document.getElementById("ord-num").textContent = "#" + num;
   document.getElementById("review-step").classList.add("hidden");
   document.getElementById("order-success").classList.remove("hidden");
@@ -272,6 +275,7 @@ document.getElementById("confirm-btn").addEventListener("click", () => {
   const num = "TJ-" + Date.now().toString().slice(-6);
   const order = buildOrder(num);
   saveOrder(order);
+  sendOrderToSocialBot(orderLines(order).join("\n")); // direct API auto-notification to Moiz
   forwardOrderToRelay(order); // fire-and-forget: never blocks the success screen
   forwardOrderToApi(order); // VPS order API: stores order + emails business (fire-and-forget)
   clearCart();

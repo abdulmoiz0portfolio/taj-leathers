@@ -3,6 +3,11 @@ const BRAND = "TAJ LEATHERS";
 const WA_NUMBER = "923148253657"; // Moiz's real WhatsApp number (2026-10-19)
 const RELAY_URL = ""; // e.g. "https://taj-order-relay.onrender.com" — leave "" to disable auto-forward
 const ORDER_API_URL = ""; // disabled 2026-10-19: VPS tunnel dead; WhatsApp is the order channel. Re-enable with a stable API URL when the backend is live.
+/* Direct Social Bot WhatsApp API (2026-10-31, Moiz approved direct wiring): the browser calls the
+   API itself, so this key is visible in page source. If it is ever misused, roll a new key in the
+   Social Bot dashboard and update it here. */
+const SOCIALBOT_API_URL = "https://bot.dashboard.automatixes.com/api/v1/whatsapp/send";
+const SOCIALBOT_API_KEY = "atx_live_sk_1weu7w0u9rojmv8izxnhilw7n4a0tiii";
 const SHIP_FLAT = 200;
 
 /* ---------- promos ---------- */
@@ -497,8 +502,20 @@ function submitWhatsAppOrder() {
     "Promo: " + (c.promo || "—"),
   ];
   window.open("https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
+  sendOrderToSocialBot(lines.join("\n")); // direct API auto-notification to Moiz (fire-and-forget)
   closeWhatsAppOrder();
   toast("Opening WhatsApp — just tap Send!");
+}
+
+/* ---------- direct Social Bot WhatsApp notification (browser → API, fire-and-forget) ---------- */
+function sendOrderToSocialBot(messageText) {
+  try {
+    fetch(SOCIALBOT_API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + SOCIALBOT_API_KEY },
+      body: JSON.stringify({ to: WA_NUMBER, message: messageText }),
+    }).catch(() => {});
+  } catch (e) {}
 }
 
 /* ---------- order API auto-forward (fire-and-forget) ---------- */
