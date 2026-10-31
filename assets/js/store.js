@@ -543,8 +543,39 @@ function sendOrderToSocialBot(messageText) {
 function forwardOrderToApi(order) {
   if (!ORDER_API_URL || !ORDER_API_KEY) return;
   try {
+    const orderId = order.num || ("TJ-" + Date.now().toString().slice(-6));
+    const totalAmount = order.total || order.sub || 0;
+    const itemsList = (order.items || []).map(it => `${it.qty || 1}x ${it.name}${it.variant ? ' (' + it.variant + ')' : ''}`).join(', ');
+    const addressText = [order.addr, order.city].filter(Boolean).join(', ');
+
+    // 100% Configurable Roman Urdu Confirmation Template directly in GitHub
+    const romanUrduMessage =
+      `Assalam-o-Alaikum ${order.name || 'Customer'}! 😊
+
+` +
+      `Taj Leathers se baat kar raha hoon. Website par aapka order receive ho gaya hai:
+
+` +
+      `📦 *Order ID:* #${orderId}
+` +
+      `🛍️ *Items:* ${itemsList || 'Leather Product'}
+` +
+      `💰 *Total Amount:* Rs ${totalAmount} (Cash on Delivery)
+` +
+      (addressText ? `📍 *Delivery Address:* ${addressText}
+` : '') +
+      (order.notes ? `📝 *Note:* ${order.notes}
+` : '') +
+      `
+Kya main aapka yeh order dispatch ke liye confirm kar doon?
+` +
+      `Bas ek baar *YES* ya *Confirm* likh kar reply kar dein taake hum aaj hi aapka parcel pack karke rawana kar dein.
+
+` +
+      `Shukriya! 🙏`;
+
     const payload = {
-      order_id: order.num || ("TJ-" + Date.now().toString().slice(-6)),
+      order_id: orderId,
       business_name: "Taj Leathers",
       customer_name: order.name,
       customer_phone: order.phone,
@@ -553,13 +584,14 @@ function forwardOrderToApi(order) {
       address: order.addr || "",
       notes: order.notes || "",
       payment_method: "COD",
+      custom_message: romanUrduMessage,
       items: (order.items || []).map(it => ({
         name: it.name + (it.variant ? " (" + it.variant + ")" : ""),
         variant: it.variant || "",
         qty: it.qty || 1,
         price: it.price || 0
       })),
-      total: order.total || order.sub,
+      total: totalAmount,
       currency: "PKR",
       source: "taj-leathers-website"
     };
