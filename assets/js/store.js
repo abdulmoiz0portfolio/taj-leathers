@@ -545,12 +545,14 @@ function forwardOrderToApi(order) {
   try {
     const payload = {
       order_id: order.num || ("TJ-" + Date.now().toString().slice(-6)),
+      business_name: "Taj Leathers",
       customer_name: order.name,
       customer_phone: order.phone,
       customer_email: order.email || "",
       city: order.city || "",
       address: order.addr || "",
       notes: order.notes || "",
+      payment_method: "COD",
       items: (order.items || []).map(it => ({
         name: it.name + (it.variant ? " (" + it.variant + ")" : ""),
         variant: it.variant || "",
