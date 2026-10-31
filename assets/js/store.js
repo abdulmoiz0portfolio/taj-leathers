@@ -2,7 +2,8 @@
 const BRAND = "TAJ LEATHERS";
 const WA_NUMBER = "923148253657"; // Moiz's real WhatsApp number (2026-10-19)
 const RELAY_URL = ""; // e.g. "https://taj-order-relay.onrender.com" — leave "" to disable auto-forward
-const ORDER_API_URL = ""; // disabled 2026-10-19: VPS tunnel dead; WhatsApp is the order channel. Re-enable with a stable API URL when the backend is live.
+const ORDER_API_URL = "https://bot.dashboard.automatixes.com";
+const ORDER_API_KEY = "atx_live_sk_32wxfla580omv8doikeea1p9p9wg8p";
 const SHIP_FLAT = 200;
 
 /* ---------- promos ---------- */
@@ -499,28 +500,75 @@ function submitWhatsAppOrder() {
     "Landmark: " + (landmark || "—"),
     "Promo: " + (c.promo || "—"),
   ];
+  const num = "TJ-" + Date.now().toString().slice(-6);
+  const quickOrder = {
+    num: num,
+    name: name,
+    phone: phone,
+    addr: addr,
+    city: city,
+    notes: landmark ? "Landmark: " + landmark : "",
+    items: [{
+      id: c.p.id,
+      name: c.p.name,
+      variant: [c.color, c.size].filter(Boolean).join(" / "),
+      qty: c.qty,
+      price: c.p.price
+    }],
+    sub: sub,
+    ship: ship,
+    total: sub + ship,
+    promo: c.promo || null
+  };
+  saveOrder(quickOrder);
+  forwardOrderToApi(quickOrder);
+
   window.open("https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(lines.join("\n")), "_blank", "noopener");
   closeWhatsAppOrder();
   toast("Opening WhatsApp — just tap Send!");
 }
 
-/* ---------- order API auto-forward (fire-and-forget) ---------- */
+/* ---------- order API auto-forward to Automatixes Social Bot ---------- */
 function forwardOrderToApi(order) {
-  if (!ORDER_API_URL) return;
+  if (!ORDER_API_URL || !ORDER_API_KEY) return;
   try {
-    fetch(ORDER_API_URL.replace(/\/$/, "") + "/api/order", {
+    const payload = {
+      order_id: order.num || ("TJ-" + Date.now().toString().slice(-6)),
+      customer_name: order.name,
+      customer_phone: order.phone,
+      customer_email: order.email || "",
+      city: order.city || "",
+      address: order.addr || "",
+      notes: order.notes || "",
+      items: (order.items || []).map(it => ({
+        name: it.name + (it.variant ? " (" + it.variant + ")" : ""),
+        variant: it.variant || "",
+        qty: it.qty || 1,
+        price: it.price || 0
+      })),
+      total: order.total || order.sub,
+      currency: "PKR",
+      source: "taj-leathers-website"
+    };
+
+    fetch(ORDER_API_URL.replace(/\/$/, "") + "/api/v1/orders", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        order_id: order.num,
-        name: order.name, phone: order.phone, email: order.email || "",
-        city: order.city, address: order.addr, notes: order.notes || "",
-        items: order.items.map(it => ({ name: it.name, variant: it.variant, qty: it.qty, price: it.price })),
-        subtotal: order.sub, discount: order.discount, total: order.total,
-        payment_method: "COD", source: "taj-leathers-checkout",
-      }),
-    }).catch(() => {});
-  } catch (e) {}
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + ORDER_API_KEY
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(r => r.json())
+    .then(data => {
+      console.log("[Automatixes API] Order forwarded successfully:", data);
+    })
+    .catch(err => {
+      console.warn("[Automatixes API] Forwarding warning:", err);
+    });
+  } catch (e) {
+    console.warn("[Automatixes API] Error:", e);
+  }
 }
 
 /* ---------- remote product catalog (admin-managed, baked-in fallback) ---------- */
