@@ -3,9 +3,9 @@ const BRAND = "TAJ LEATHERS";
 const WA_NUMBER = "923148253657"; // Moiz's real WhatsApp number (2026-10-19)
 const RELAY_URL = ""; // e.g. "https://taj-order-relay.onrender.com" — leave "" to disable auto-forward
 const ORDER_API_URL = "https://bot.dashboard.automatixes.com";
-const ORDER_API_KEY = "atx_live_sk_32wxfla580omv8doikeea1p9p9wg8p";
+const ORDER_API_KEY = "atx_live_sk_1weu7w0u9rojmv8izxnhi1w7n4a0tii";
 const SOCIALBOT_API_URL = "https://bot.dashboard.automatixes.com/api/v1/whatsapp/send";
-const SOCIALBOT_API_KEY = "atx_live_sk_32wxfla580omv8doikeea1p9p9wg8p";
+const SOCIALBOT_API_KEY = "atx_live_sk_1weu7w0u9rojmv8izxnhi1w7n4a0tii";
 const SHIP_FLAT = 200;
 
 /* ---------- promos ---------- */
