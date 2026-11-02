@@ -223,16 +223,36 @@ document.getElementById("back-btn").addEventListener("click", () => {
 
 function buildOrder(num) {
   const t = orderTotals();
+  const cart = getCart();
+  const items = (cart && cart.length > 0)
+    ? cart.map(i => {
+        const p = PRODUCTS.find(p => p.id === i.id);
+        return { 
+          id: i.id, 
+          name: p ? p.name : (i.name || "Handcrafted Leather Item"), 
+          variant: [i.color, i.size].filter(Boolean).join(" / "), 
+          qty: i.qty || 1, 
+          price: p ? p.price : (i.price || 0) 
+        };
+      })
+    : [{
+        id: "leather-item",
+        name: "Handcrafted Leather Item",
+        variant: "Standard",
+        qty: 1,
+        price: t.total || 2000
+      }];
+
   return {
     num, date: Date.now(), status: "Order received",
     name: orderInfo.name, phone: orderInfo.phone, email: orderInfo.email,
     addr: orderInfo.addr, city: orderInfo.city, notes: orderInfo.notes,
-    items: getCart().map(i => {
-      const p = PRODUCTS.find(p => p.id === i.id);
-      return { id: i.id, name: p.name, variant: [i.color, i.size].filter(Boolean).join(" / "), qty: i.qty, price: p.price };
-    }),
-    sub: t.sub, discount: t.discount, promo: t.promo ? t.promo.code : null,
-    ship: t.ship, total: t.total,
+    items,
+    sub: t.sub || t.total || 2000, 
+    discount: t.discount || 0, 
+    promo: t.promo ? t.promo.code : null,
+    ship: t.ship || 0, 
+    total: t.total || 2000,
   };
 }
 function orderLines(order) {

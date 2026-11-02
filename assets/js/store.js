@@ -2,9 +2,9 @@
 const BRAND = "TAJ LEATHERS";
 const WA_NUMBER = "923148253657"; // Moiz's real WhatsApp number (2026-10-19)
 const RELAY_URL = ""; // e.g. "https://taj-order-relay.onrender.com" — leave "" to disable auto-forward
-const ORDER_API_URL = "https://bot.dashboard.automatixes.com";
+const ORDER_API_URL = "https://bot.automatixes.com";
 const ORDER_API_KEY = "atx_live_sk_1weu7w0u9rojmv8izxnhi1w7n4a0tii";
-const SOCIALBOT_API_URL = "https://bot.dashboard.automatixes.com/api/v1/whatsapp/send";
+const SOCIALBOT_API_URL = "https://bot.automatixes.com/api/v1/whatsapp/send";
 const SOCIALBOT_API_KEY = "atx_live_sk_1weu7w0u9rojmv8izxnhi1w7n4a0tii";
 const SHIP_FLAT = 200;
 
@@ -548,31 +548,29 @@ function forwardOrderToApi(order) {
     const itemsList = (order.items || []).map(it => `${it.qty || 1}x ${it.name}${it.variant ? ' (' + it.variant + ')' : ''}`).join(', ');
     const addressText = [order.addr, order.city].filter(Boolean).join(', ');
 
-    // 100% Configurable Roman Urdu Confirmation Template directly in GitHub
+    // 100% Configurable Roman Urdu Confirmation Template with Advance 200 Easypaisa
     const romanUrduMessage =
-      `Assalam-o-Alaikum ${order.name || 'Customer'}! 😊
+      `Bohat shukriya ${order.name || 'Customer'}! Aapka order #${orderId} confirm ho gaya hai. 🎉\n\n` +
+      `Order confirm karke dispatch karne ke liye advance 200 send krden yh num hai:\n\n` +
+      `Account No: 03332324633\n` +
+      `Account Name: Irfan Taj\n` +
+      `easypaisa\n\n` +
+      `Advance payment (Rs 200) send karne ke baad screenshot yahan WhatsApp par share kar dein taake aapka order pack karke rawana kar diya jaye. Baqi raqam Cash on Delivery (COD) par rider ko ada karni hogi.\n\n` +
+      `Shukriya! — Taj leather`;
 
-` +
-      `Taj Leathers se baat kar raha hoon. Website par aapka order receive ho gaya hai:
-
-` +
-      `📦 *Order ID:* #${orderId}
-` +
-      `🛍️ *Items:* ${itemsList || 'Leather Product'}
-` +
-      `💰 *Total Amount:* Rs ${totalAmount} (Cash on Delivery)
-` +
-      (addressText ? `📍 *Delivery Address:* ${addressText}
-` : '') +
-      (order.notes ? `📝 *Note:* ${order.notes}
-` : '') +
-      `
-Kya main aapka yeh order dispatch ke liye confirm kar doon?
-` +
-      `Bas ek baar *YES* ya *Confirm* likh kar reply kar dein taake hum aaj hi aapka parcel pack karke rawana kar dein.
-
-` +
-      `Shukriya! 🙏`;
+    const payloadItems = (order.items && order.items.length > 0)
+      ? order.items.map(it => ({
+          name: it.name + (it.variant ? " (" + it.variant + ")" : ""),
+          variant: it.variant || "",
+          qty: it.qty || 1,
+          price: it.price || 0
+        }))
+      : [{
+          name: "Handcrafted Leather Product",
+          variant: "Standard",
+          qty: 1,
+          price: totalAmount || 2000
+        }];
 
     const payload = {
       order_id: orderId,
@@ -585,12 +583,7 @@ Kya main aapka yeh order dispatch ke liye confirm kar doon?
       notes: order.notes || "",
       payment_method: "COD",
       custom_message: romanUrduMessage,
-      items: (order.items || []).map(it => ({
-        name: it.name + (it.variant ? " (" + it.variant + ")" : ""),
-        variant: it.variant || "",
-        qty: it.qty || 1,
-        price: it.price || 0
-      })),
+      items: payloadItems,
       total: totalAmount,
       currency: "PKR",
       source: "taj-leathers-website"
