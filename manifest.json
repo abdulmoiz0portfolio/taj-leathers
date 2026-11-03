@@ -1,0 +1,24 @@
+{
+  "name": "Taj Leathers Orders",
+  "short_name": "Taj Orders",
+  "description": "Taj Leathers Store Owner Admin & Orders Dashboard",
+  "start_url": "./admin.html",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0B0B0D",
+  "theme_color": "#D4AF37",
+  "icons": [
+    {
+      "src": "assets/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/apple-touch-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Taj Leathers — Owner Orders Portal</title>
+  <meta name="theme-color" content="#0B0B0D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/apple-touch-icon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            gold: {
+              300: '#F3E5AB',
+              400: '#E5C158',
+              500: '#D4AF37',
+              600: '#AA8C2C',
+              700: '#806921'
+            },
+            obsidian: {
+              900: '#070709',
+              800: '#0B0B0D',
+              700: '#141418',
+              600: '#1C1C22',
+              500: '#2A2A32'
+            }
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #070709;
+      color: #F3F4F6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior-y: contain;
+    }
+    .gold-gradient {
+      background: linear-gradient(135deg, #F3E5AB 0%, #D4AF37 50%, #AA8C2C 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .gold-border {
+      border-color: rgba(212, 175, 55, 0.2);
+    }
+    .gold-border-active {
+      border-color: rgba(212, 175, 55, 0.6);
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.15); opacity: 0.3; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-dot {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+    @media print {
+      body * { visibility: hidden; }
+      #print-area, #print-area * { visibility: visible; }
+      #print-area { position: absolute; left: 0; top: 0; width: 100%; color: black !important; background: white !important; }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-obsidian-900 text-gray-100 flex flex-col antialiased selection:bg-gold-500 selection:text-black">
+
+  <!-- ==================== LOGIN SCREEN ==================== -->
+  <div id="login-view" class="flex-1 flex items-center justify-center p-4">
+    <div class="w-full max-w-sm bg-obsidian-800 border gold-border rounded-2xl p-6 sm:p-8 shadow-2xl relative overflow-hidden backdrop-blur-xl">
+      <div class="absolute -top-24 -right-24 w-48 h-48 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-obsidian-700 border gold-border mb-3 shadow-inner">
+          <span class="text-2xl font-serif text-gold-500 font-bold">TL</span>
+        </div>
+        <h1 class="text-xl font-serif font-bold tracking-wide text-white">TAJ LEATHERS</h1>
+        <p class="text-xs uppercase tracking-widest text-gold-500 mt-1 font-semibold">Store Owner Portal</p>
+        <p class="text-[11px] text-gray-400 mt-2">Sign in to view real-time orders & manage deliveries</p>
+      </div>
+
+      <div id="login-error" class="hidden mb-4 p-3 bg-red-950/60 border border-red-500/40 rounded-xl text-red-300 text-xs text-center"></div>
+
+      <form id="login-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1.5">Username</label>
+          <input 
+            type="text" 
+            id="login-username" 
+            value="irfantaj" 
+            required 
+            autocomplete="username"
+            class="w-full px-3.5 py-2.5 bg-obsidian-700/80 border gold-border rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 transition-colors"
+            placeholder="irfantaj"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-medium text-gray-300 mb-1.5">Password</label>
+          <input 
+            type="password" 
+            id="login-password" 
+            required 
+            autocomplete="current-password"
+            class="w-full px-3.5 py-2.5 bg-obsidian-700/80 border gold-border rounded-xl text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 transition-colors"
+            placeholder="••••••••"
+          />
+        </div>
+
+        <div class="flex items-center justify-between text-xs text-gray-400">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="remember-me" checked class="rounded border-gray-700 bg-obsidian-700 text-gold-500 focus:ring-0">
+            <span>Keep me logged in</span>
+          </label>
+        </div>
+
+        <button 
+          type="submit" 
+          id="login-btn"
+          class="w-full py-3 bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 hover:from-gold-500 hover:to-gold-400 text-black font-semibold rounded-xl text-sm tracking-wide shadow-lg shadow-gold-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
+        >
+          <span>Sign In</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </button>
+      </form>
+
+      <div class="mt-6 pt-4 border-t border-gray-800 text-center">
+        <span class="inline-flex items-center gap-1.5 text-[11px] text-gray-400">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span>
+          Fail-Safe Independent Server Active
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== DASHBOARD APP VIEW ==================== -->
+  <div id="app-view" class="hidden flex-1 flex flex-col min-h-screen">
+    
+    <!-- Top Sticky Header -->
+    <header class="sticky top-0 z-40 bg-obsidian-900/90 backdrop-blur-md border-b gold-border px-3 sm:px-6 py-2.5 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-obsidian-700 border gold-border flex items-center justify-center shadow-md">
+          <span class="font-serif font-bold text-gold-500 text-base">TL</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-serif font-bold text-sm sm:text-base text-white tracking-wide">TAJ LEATHERS</h1>
+            <span class="text-[9px] bg-gold-500/20 text-gold-400 px-1.5 py-0.5 rounded font-mono font-bold uppercase">Owner</span>
+          </div>
+          <!-- WhatsApp Live Status Pill -->
+          <div id="wa-status-pill" class="flex items-center gap-1.5 text-[10px] text-gray-400 cursor-pointer">
+            <span class="w-2 h-2 rounded-full bg-yellow-400 inline-block pulse-dot" id="wa-indicator"></span>
+            <span id="wa-status-text">Checking WhatsApp...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Live Polling Status Indicator -->
+        <button 
+          id="manual-refresh-btn" 
+          title="Refresh Orders"
+          class="p-2 rounded-xl bg-obsidian-800 border gold-border text-gray-300 hover:text-gold-400 hover:bg-obsidian-700 active:scale-95 transition-all text-xs flex items-center gap-1.5"
+        >
+          <svg id="refresh-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span class="hidden sm:inline text-[11px]" id="sync-text">Live (8s)</span>
+        </button>
+
+        <!-- Sound Toggle -->
+        <button 
+          id="sound-toggle-btn"
+          title="Toggle Notification Sound"
+          class="p-2 rounded-xl bg-obsidian-800 border gold-border text-gold-400 hover:bg-obsidian-700 active:scale-95 transition-all text-xs"
+        >
+          <svg id="sound-icon-on" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+        </button>
+
+        <!-- Logout -->
+        <button 
+          id="logout-btn" 
+          title="Sign Out"
+          class="p-2 rounded-xl bg-obsidian-800 border gold-border text-gray-400 hover:text-red-400 hover:bg-obsidian-700 active:scale-95 transition-all"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Android Install PWA Banner (conditional) -->
+    <div id="android-install-banner" class="hidden bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-black px-4 py-2 text-xs flex items-center justify-between font-semibold shadow-md">
+      <div class="flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+        <span>Install Taj Orders App on your Android Phone!</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="pwa-install-btn" class="bg-black text-gold-400 px-3 py-1 rounded-lg text-[11px] font-bold active:scale-95 transition-all">Install App</button>
+        <button id="pwa-close-btn" class="text-black/80 hover:text-black font-bold text-sm px-1">✕</button>
+      </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 flex flex-col gap-4">
+      
+      <!-- Metrics Bar (Swipeable Cards on Mobile) -->
+      <section class="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
+        <div class="bg-obsidian-800 border gold-border rounded-xl p-3 shadow-sm flex flex-col justify-between">
+          <span class="text-[10px] sm:text-xs text-gray-400 uppercase font-semibold">Total Orders</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span class="text-xl sm:text-2xl font-bold text-white font-serif" id="stat-total">0</span>
+            <span class="text-xs text-gold-400">📦</span>
+          </div>
+        </div>
+
+        <div class="bg-obsidian-800 border gold-border rounded-xl p-3 shadow-sm flex flex-col justify-between">
+          <span class="text-[10px] sm:text-xs text-amber-400 uppercase font-semibold">Pending Reply</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span class="text-xl sm:text-2xl font-bold text-amber-300 font-serif" id="stat-sent">0</span>
+            <span class="text-xs text-amber-400">⏳</span>
+          </div>
+        </div>
+
+        <div class="bg-obsidian-800 border gold-border rounded-xl p-3 shadow-sm flex flex-col justify-between">
+          <span class="text-[10px] sm:text-xs text-blue-400 uppercase font-semibold">Confirmed</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span class="text-xl sm:text-2xl font-bold text-blue-300 font-serif" id="stat-confirmed">0</span>
+            <span class="text-xs text-blue-400">💬</span>
+          </div>
+        </div>
+
+        <div class="bg-obsidian-800 border gold-border rounded-xl p-3 shadow-sm flex flex-col justify-between">
+          <span class="text-[10px] sm:text-xs text-emerald-400 uppercase font-semibold">Advance Paid</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span class="text-xl sm:text-2xl font-bold text-emerald-300 font-serif" id="stat-paid">0</span>
+            <span class="text-xs text-emerald-400">💰</span>
+          </div>
+        </div>
+
+        <div class="col-span-2 sm:col-span-1 bg-obsidian-800 border gold-border rounded-xl p-3 shadow-sm flex flex-col justify-between">
+          <span class="text-[10px] sm:text-xs text-purple-400 uppercase font-semibold">Dispatched</span>
+          <div class="flex items-baseline justify-between mt-1">
+            <span class="text-xl sm:text-2xl font-bold text-purple-300 font-serif" id="stat-dispatched">0</span>
+            <span class="text-xs text-purple-400">🚚</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Search & Filters -->
+      <section class="flex flex-col gap-2.5">
+        <!-- Search Box -->
+        <div class="relative">
+          <input 
+            type="text" 
+            id="order-search" 
+            placeholder="Search by Order ID, Customer Name, or Phone..."
+            class="w-full pl-9 pr-8 py-2.5 bg-obsidian-800 border gold-border rounded-xl text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 transition-colors shadow-sm"
+          />
+          <svg class="w-4 h-4 text-gray-500 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <button id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-gray-400 hover:text-white text-xs">✕</button>
+        </div>
+
+        <!-- Scrollable Status Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-1">
+          <button class="status-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-gold-500 text-black transition-all" data-status="all">All Orders (<span id="tab-cnt-all">0</span>)</button>
+          <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="sent">Pending (<span id="tab-cnt-sent">0</span>)</button>
+          <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="confirmed">Confirmed (<span id="tab-cnt-confirmed">0</span>)</button>
+          <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="paid">Advance Paid (<span id="tab-cnt-paid">0</span>)</button>
+          <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="dispatched">Dispatched (<span id="tab-cnt-dispatched">0</span>)</button>
+          <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="delivered">Delivered (<span id="tab-cnt-delivered">0</span>)</button>
+          <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="cancelled">Cancelled (<span id="tab-cnt-cancelled">0</span>)</button>
+        </div>
+      </section>
+
+      <!-- Orders Feed -->
+      <section id="orders-container" class="flex flex-col gap-3 min-h-[300px]">
+        <!-- Loading State -->
+        <div id="orders-loading" class="flex flex-col items-center justify-center py-16 text-gray-400 gap-3">
+          <div class="w-8 h-8 border-2 border-gold-500 border-t-transparent rounded-full animate-spin"></div>
+          <span class="text-xs">Loading orders from database...</span>
+        </div>
+
+        <!-- Empty State -->
+        <div id="orders-empty" class="hidden flex flex-col items-center justify-center py-16 text-gray-500 gap-2">
+          <span class="text-3xl">📭</span>
+          <p class="text-sm font-semibold text-gray-300">No orders found</p>
+          <p class="text-xs text-gray-500">New orders placed on the website will show up here automatically.</p>
+        </div>
+
+        <!-- Orders List Wrapper -->
+        <div id="orders-list" class="flex flex-col gap-3"></div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================== ORDER DETAILS & PACKING SLIP MODAL ==================== -->
+  <div id="order-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="w-full max-w-lg bg-obsidian-800 border gold-border rounded-t-2xl sm:rounded-2xl max-h-[90vh] flex flex-col overflow-hidden shadow-2xl animate-in slide-in-from-bottom">
+      
+      <!-- Modal Header -->
+      <div class="px-4 py-3 border-b gold-border flex items-center justify-between bg-obsidian-900/60">
+        <div>
+          <span id="modal-order-id" class="font-serif font-bold text-gold-400 text-base">#TJ-000000</span>
+          <span id="modal-status-badge" class="ml-2 px-2 py-0.5 rounded text-[10px] font-semibold"></span>
+        </div>
+        <button id="modal-close-btn" class="p-1 rounded-lg text-gray-400 hover:text-white text-lg">✕</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 overflow-y-auto space-y-4 text-xs" id="modal-content">
+        <!-- Customer Details -->
+        <div class="bg-obsidian-700/60 p-3 rounded-xl border border-gray-800 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-400 font-semibold uppercase text-[10px]">Customer Details</span>
+            <span id="modal-order-time" class="text-gray-500 text-[10px]"></span>
+          </div>
+          <div class="text-sm font-bold text-white" id="modal-customer-name">Name</div>
+          <div class="flex items-center gap-2 pt-1">
+            <a id="modal-call-btn" href="#" class="px-2.5 py-1.5 bg-obsidian-800 hover:bg-obsidian-600 border gold-border rounded-lg text-gold-400 font-medium flex items-center gap-1 active:scale-95">
+              <span>📞</span> Call
+            </a>
+            <a id="modal-wa-btn" href="#" target="_blank" class="px-2.5 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 rounded-lg text-emerald-300 font-medium flex items-center gap-1 active:scale-95">
+              <span>💬</span> WhatsApp
+            </a>
+            <span id="modal-customer-phone" class="text-gray-300 font-mono text-xs ml-auto"></span>
+          </div>
+          <div class="pt-2 border-t border-gray-700/50">
+            <span class="text-gray-400">Delivery Address:</span>
+            <p id="modal-address" class="text-gray-200 font-medium mt-0.5"></p>
+          </div>
+        </div>
+
+        <!-- Items Ordered -->
+        <div class="bg-obsidian-700/60 p-3 rounded-xl border border-gray-800 space-y-2">
+          <span class="text-gray-400 font-semibold uppercase text-[10px]">Ordered Items</span>
+          <div id="modal-items-list" class="space-y-1.5"></div>
+          <div class="pt-2 border-t border-gray-700/50 flex justify-between items-center text-sm font-bold text-white">
+            <span>Total Payable:</span>
+            <span class="text-gold-400 font-serif text-base" id="modal-total-amount">Rs 0</span>
+          </div>
+          <div class="text-[11px] text-gray-400 flex justify-between">
+            <span>Payment Method:</span>
+            <span id="modal-payment-method" class="text-gray-300 font-medium">Cash on Delivery</span>
+          </div>
+        </div>
+
+        <!-- Customer Note -->
+        <div id="modal-note-box" class="hidden bg-amber-950/30 p-3 rounded-xl border border-amber-500/20">
+          <span class="text-amber-400 font-semibold text-[10px] uppercase">Customer Instructions:</span>
+          <p id="modal-notes" class="text-amber-200 mt-1 italic"></p>
+        </div>
+
+        <!-- Action Status Dropdown -->
+        <div class="bg-obsidian-700/60 p-3 rounded-xl border border-gray-800 space-y-2">
+          <span class="text-gray-400 font-semibold uppercase text-[10px]">Update Order Status</span>
+          <div class="grid grid-cols-2 gap-2">
+            <button class="status-action-btn py-2 px-3 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 rounded-lg font-semibold active:scale-95 transition-all" data-status="paid">
+              ✓ Advance Received (Rs 200)
+            </button>
+            <button class="status-action-btn py-2 px-3 bg-purple-950/80 hover:bg-purple-900 border border-purple-500/40 text-purple-300 rounded-lg font-semibold active:scale-95 transition-all" data-status="dispatched">
+              🚚 Mark Dispatched
+            </button>
+            <button class="status-action-btn py-2 px-3 bg-cyan-950/80 hover:bg-cyan-900 border border-cyan-500/40 text-cyan-300 rounded-lg font-semibold active:scale-95 transition-all" data-status="delivered">
+              📦 Mark Delivered
+            </button>
+            <button class="status-action-btn py-2 px-3 bg-red-950/80 hover:bg-red-900 border border-red-500/40 text-red-300 rounded-lg font-semibold active:scale-95 transition-all" data-status="cancelled">
+              ✕ Cancel Order
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 py-3 bg-obsidian-900/80 border-t gold-border flex items-center justify-between">
+        <button id="modal-print-btn" class="px-3 py-1.5 bg-obsidian-700 hover:bg-obsidian-600 border gold-border text-gold-400 rounded-lg text-xs font-medium flex items-center gap-1.5 active:scale-95">
+          <span>🖨️</span> Print Slip
+        </button>
+        <button id="modal-done-btn" class="px-4 py-1.5 bg-gold-500 hover:bg-gold-400 text-black font-semibold rounded-lg text-xs active:scale-95">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Print Slip Template Container -->
+  <div id="print-area" class="hidden"></div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-sm z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <div class="bg-obsidian-800 border gold-border text-white p-3 rounded-xl shadow-2xl flex items-center gap-2.5">
+      <span id="toast-icon" class="text-xl">🔔</span>
+      <div class="flex-1 text-xs">
+        <p id="toast-title" class="font-bold text-gold-400">Notification</p>
+        <p id="toast-msg" class="text-gray-300 text-[11px]"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT APPLICATION LOGIC ==================== -->
+  <script>
+    const API_BASE = "https://bot.automatixes.com";
+    let token = localStorage.getItem("taj_owner_token") || "";
+    let cachedOrders = [];
+    let knownOrderIds = new Set();
+    let currentFilterStatus = "all";
+    let currentSearchQuery = "";
+    let pollingInterval = null;
+    let deferredPrompt = null;
+    let soundEnabled = true;
+    let activeModalOrder = null;
+
+    // Web Audio Synthesizer (No external audio file needed!)
+    function playOrderChime() {
+      if (!soundEnabled) return;
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+
+        // High pleasant ding
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(880, ctx.currentTime); // A5
+        osc1.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.15); // A6
+        gain1.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.start();
+        osc1.stop(ctx.currentTime + 0.4);
+
+        // Second harmonic chime
+        setTimeout(() => {
+          const osc2 = ctx.createOscillator();
+          const gain2 = ctx.createGain();
+          osc2.type = "sine";
+          osc2.frequency.setValueAtTime(1320, ctx.currentTime); // E6
+          gain2.gain.setValueAtTime(0.25, ctx.currentTime);
+          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+          osc2.connect(gain2);
+          gain2.connect(ctx.destination);
+          osc2.start();
+          osc2.stop(ctx.currentTime + 0.5);
+        }, 120);
+      } catch (e) {}
+    }
+
+    // Android PWA Install Prompt Listener
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const banner = document.getElementById("android-install-banner");
+      if (banner) banner.classList.remove("hidden");
+    });
+
+    document.getElementById("pwa-install-btn")?.addEventListener("click", async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === "accepted") {
+          document.getElementById("android-install-banner")?.classList.add("hidden");
+        }
+        deferredPrompt = null;
+      }
+    });
+
+    document.getElementById("pwa-close-btn")?.addEventListener("click", () => {
+      document.getElementById("android-install-banner")?.classList.add("hidden");
+    });
+
+    // Register Service Worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./sw.js").catch(() => {});
+      });
+    }
+
+    // Toast Notification helper
+    function showToast(title, msg, icon = "🔔") {
+      const toast = document.getElementById("toast");
+      document.getElementById("toast-title").textContent = title;
+      document.getElementById("toast-msg").textContent = msg;
+      document.getElementById("toast-icon").textContent = icon;
+      toast.classList.remove("translate-y-24", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+      setTimeout(() => {
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-24", "opacity-0");
+      }, 4000);
+    }
+
+    // Relative Time Helper
+    function timeAgo(dateString) {
+      if (!dateString) return "";
+      const date = new Date(dateString);
+      const now = new Date();
+      const seconds = Math.floor((now - date) / 1000);
+      if (seconds < 60) return "Just now";
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+
+    // Format currency
+    function fmt(val) {
+      return "Rs " + Number(val || 0).toLocaleString();
+    }
+
+    // Status Badge Helper
+    function getStatusBadge(status) {
+      const s = (status || "").toLowerCase();
+      switch (s) {
+        case "sent":
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">⏳ Awaiting Reply</span>`;
+        case "confirmed":
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30">💬 Confirmed (Adv Pending)</span>`;
+        case "paid":
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">✓ Advance Paid</span>`;
+        case "dispatched":
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30">🚚 Dispatched</span>`;
+        case "delivered":
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">📦 Delivered</span>`;
+        case "cancelled":
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/15 text-red-300 border border-red-500/30">✕ Cancelled</span>`;
+        default:
+          return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-500/15 text-gray-300 border border-gray-500/30">${status}</span>`;
+      }
+    }
+
+    // Initialize App
+    function init() {
+      if (token) {
+        showApp();
+      } else {
+        showLogin();
+      }
+    }
+
+    function showLogin() {
+      document.getElementById("login-view").classList.remove("hidden");
+      document.getElementById("app-view").classList.add("hidden");
+      if (pollingInterval) clearInterval(pollingInterval);
+    }
+
+    function showApp() {
+      document.getElementById("login-view").classList.add("hidden");
+      document.getElementById("app-view").classList.remove("hidden");
+      fetchOrders();
+      fetchWhatsAppStatus();
+      if (pollingInterval) clearInterval(pollingInterval);
+      pollingInterval = setInterval(() => {
+        fetchOrders(true); // silent background poll
+        fetchWhatsAppStatus();
+      }, 8000);
+    }
+
+    // Login Form Submit
+    document.getElementById("login-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const user = document.getElementById("login-username").value.trim();
+      const pass = document.getElementById("login-password").value.trim();
+      const btn = document.getElementById("login-btn");
+      const errEl = document.getElementById("login-error");
+
+      btn.disabled = true;
+      btn.innerHTML = `<span>Signing In...</span>`;
+      errEl.classList.add("hidden");
+
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/owner/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username: user, password: pass })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success && data.token) {
+          token = data.token;
+          if (document.getElementById("remember-me").checked) {
+            localStorage.setItem("taj_owner_token", token);
+          }
+          showApp();
+        } else {
+          errEl.textContent = data.error || "Invalid username or password";
+          errEl.classList.remove("hidden");
+        }
+      } catch (err) {
+        errEl.textContent = "Server connection error. Please try again.";
+        errEl.classList.remove("hidden");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<span>Sign In</span><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>`;
+      }
+    });
+
+    // Logout Button
+    document.getElementById("logout-btn").addEventListener("click", () => {
+      if (confirm("Sign out of Taj Orders?")) {
+        token = "";
+        localStorage.removeItem("taj_owner_token");
+        showLogin();
+      }
+    });
+
+    // Manual Refresh
+    document.getElementById("manual-refresh-btn").addEventListener("click", () => {
+      const icon = document.getElementById("refresh-icon");
+      icon.classList.add("animate-spin");
+      fetchOrders().finally(() => {
+        setTimeout(() => icon.classList.remove("animate-spin"), 500);
+      });
+      fetchWhatsAppStatus();
+    });
+
+    // Sound Toggle
+    document.getElementById("sound-toggle-btn").addEventListener("click", () => {
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById("sound-toggle-btn");
+      btn.classList.toggle("text-gold-400", soundEnabled);
+      btn.classList.toggle("text-gray-500", !soundEnabled);
+      showToast("Sound Settings", soundEnabled ? "Notification sound enabled" : "Notification sound muted", soundEnabled ? "🔔" : "🔕");
+    });
+
+    // Status Tab Filters
+    document.querySelectorAll(".status-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".status-tab-btn").forEach(b => {
+          b.classList.remove("bg-gold-500", "text-black");
+          b.classList.add("bg-obsidian-800", "text-gray-300");
+        });
+        btn.classList.add("bg-gold-500", "text-black");
+        btn.classList.remove("bg-obsidian-800", "text-gray-300");
+        currentFilterStatus = btn.dataset.status;
+        renderOrders();
+      });
+    });
+
+    // Search Box Listener
+    const searchInput = document.getElementById("order-search");
+    const clearSearchBtn = document.getElementById("clear-search-btn");
+    searchInput.addEventListener("input", (e) => {
+      currentSearchQuery = e.target.value.toLowerCase().trim();
+      clearSearchBtn.classList.toggle("hidden", !currentSearchQuery);
+      renderOrders();
+    });
+    clearSearchBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      currentSearchQuery = "";
+      clearSearchBtn.classList.add("hidden");
+      renderOrders();
+    });
+
+    // Fetch Orders from API
+    async function fetchOrders(isSilent = false) {
+      if (!token) return;
+      if (!isSilent) {
+        document.getElementById("orders-loading").classList.remove("hidden");
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/owner/orders`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        
+        if (res.status === 401) {
+          token = "";
+          localStorage.removeItem("taj_owner_token");
+          showLogin();
+          return;
+        }
+
+        const data = await res.json();
+        if (data.success && Array.isArray(data.orders)) {
+          // Detect brand new orders for Audio Chime
+          if (knownOrderIds.size > 0) {
+            let hasNew = false;
+            let latestOrder = null;
+            data.orders.forEach(o => {
+              if (o.order_id && !knownOrderIds.has(o.order_id)) {
+                hasNew = true;
+                latestOrder = o;
+              }
+            });
+            if (hasNew && latestOrder) {
+              playOrderChime();
+              showToast("New Order Received!", `#${latestOrder.order_id} - ${latestOrder.customer_name} (${fmt(latestOrder.total)})`, "🛍️");
+            }
+          }
+
+          // Populate known IDs
+          data.orders.forEach(o => {
+            if (o.order_id) knownOrderIds.add(o.order_id);
+          });
+
+          cachedOrders = data.orders;
+          updateCounts(data.counts || {});
+          renderOrders();
+        }
+      } catch (err) {
+        console.warn("Orders fetch warning:", err);
+      } finally {
+        document.getElementById("orders-loading").classList.add("hidden");
+      }
+    }
+
+    // Update Metrics
+    function updateCounts(counts) {
+      document.getElementById("stat-total").textContent = counts.all || cachedOrders.length || 0;
+      document.getElementById("stat-sent").textContent = counts.sent || 0;
+      document.getElementById("stat-confirmed").textContent = counts.confirmed || 0;
+      document.getElementById("stat-paid").textContent = counts.paid || 0;
+      document.getElementById("stat-dispatched").textContent = counts.dispatched || 0;
+
+      document.getElementById("tab-cnt-all").textContent = counts.all || cachedOrders.length || 0;
+      document.getElementById("tab-cnt-sent").textContent = counts.sent || 0;
+      document.getElementById("tab-cnt-confirmed").textContent = counts.confirmed || 0;
+      document.getElementById("tab-cnt-paid").textContent = counts.paid || 0;
+      document.getElementById("tab-cnt-dispatched").textContent = counts.dispatched || 0;
+      document.getElementById("tab-cnt-delivered").textContent = counts.delivered || 0;
+      document.getElementById("tab-cnt-cancelled").textContent = counts.cancelled || 0;
+    }
+
+    // Render Order Cards
+    function renderOrders() {
+      const listEl = document.getElementById("orders-list");
+      const emptyEl = document.getElementById("orders-empty");
+
+      let filtered = cachedOrders;
+
+      if (currentFilterStatus !== "all") {
+        filtered = filtered.filter(o => (o.status || "").toLowerCase() === currentFilterStatus);
+      }
+
+      if (currentSearchQuery) {
+        filtered = filtered.filter(o => 
+          (o.order_id && o.order_id.toLowerCase().includes(currentSearchQuery)) ||
+          (o.customer_name && o.customer_name.toLowerCase().includes(currentSearchQuery)) ||
+          (o.customer_phone && o.customer_phone.includes(currentSearchQuery))
+        );
+      }
+
+      if (!filtered || filtered.length === 0) {
+        listEl.innerHTML = "";
+        emptyEl.classList.remove("hidden");
+        return;
+      }
+
+      emptyEl.classList.add("hidden");
+
+      // Sort newest first
+      filtered.sort((a, b) => new Date(b.created_at || b.date || 0) - new Date(a.created_at || a.date || 0));
+
+      listEl.innerHTML = filtered.map(order => {
+        const orderId = order.order_id || order.id || "N/A";
+        const cleanPhone = String(order.customer_phone || "").replace(/[^0-9]/g, '');
+        const itemsSummary = (order.items || []).map(i => `${i.qty || 1}x ${i.name}${i.variant ? ' (' + i.variant + ')' : ''}`).join(', ') || 'Custom Leather Item';
+        const addressText = [order.address, order.city].filter(Boolean).join(', ') || order.city || 'Karachi';
+
+        return `
+          <div class="bg-obsidian-800 border gold-border hover:border-gold-500/50 rounded-2xl p-4 shadow-md transition-all">
+            <!-- Top Row: Order ID, Status, Timestamp -->
+            <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5">
+              <div class="flex items-center gap-2">
+                <span class="font-serif font-bold text-gold-400 text-sm tracking-wide cursor-pointer hover:underline" onclick="openOrderModal('${orderId}')">#${orderId}</span>
+                ${getStatusBadge(order.status)}
+              </div>
+              <span class="text-[11px] text-gray-500">${timeAgo(order.created_at || order.date)}</span>
+            </div>
+
+            <!-- Middle Row: Customer Info & Call / WhatsApp buttons -->
+            <div class="py-2.5 flex items-center justify-between">
+              <div>
+                <h3 class="text-sm font-bold text-white">${order.customer_name || 'Customer'}</h3>
+                <p class="text-xs text-gray-400 font-mono mt-0.5">+${cleanPhone}</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <a 
+                  href="tel:${cleanPhone}" 
+                  class="px-3 py-1.5 bg-obsidian-700 hover:bg-obsidian-600 border gold-border rounded-xl text-xs text-gold-400 font-semibold flex items-center gap-1 active:scale-95 transition-all shadow-sm"
+                  title="Call Customer"
+                >
+                  <span>📞</span> Call
+                </a>
+                <a 
+                  href="https://wa.me/${cleanPhone}" 
+                  target="_blank" 
+                  rel="noopener"
+                  class="px-3 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 rounded-xl text-xs text-emerald-300 font-semibold flex items-center gap-1 active:scale-95 transition-all shadow-sm"
+                  title="Chat on WhatsApp"
+                >
+                  <span>💬</span> WhatsApp
+                </a>
+              </div>
+            </div>
+
+            <!-- Items Box -->
+            <div class="bg-obsidian-900/60 rounded-xl p-2.5 text-xs text-gray-300 border border-gray-800/60 mb-2.5">
+              <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider block mb-0.5">Items</span>
+              <p class="line-clamp-2">${itemsSummary}</p>
+            </div>
+
+            <!-- Address & Total -->
+            <div class="flex items-center justify-between text-xs text-gray-300 mb-3">
+              <div class="flex items-center gap-1 text-gray-400 max-w-[65%] truncate">
+                <span>📍</span>
+                <span class="truncate">${addressText}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-xs text-gray-400">Total: </span>
+                <span class="font-serif font-bold text-white text-sm">${fmt(order.total || order.sub)}</span>
+              </div>
+            </div>
+
+            <!-- Bottom Action Buttons (Quick Status updates) -->
+            <div class="pt-2 border-t border-gray-800/80 flex items-center justify-between gap-1.5">
+              <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar">
+                ${order.status !== 'paid' ? `
+                  <button 
+                    onclick="updateOrderStatus('${orderId}', 'paid')" 
+                    class="px-2.5 py-1 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/30 text-emerald-300 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+                  >
+                    ✓ Adv Paid (200)
+                  </button>
+                ` : ''}
+
+                ${order.status !== 'dispatched' ? `
+                  <button 
+                    onclick="updateOrderStatus('${orderId}', 'dispatched')" 
+                    class="px-2.5 py-1 bg-purple-950/70 hover:bg-purple-900 border border-purple-500/30 text-purple-300 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+                  >
+                    🚚 Dispatch
+                  </button>
+                ` : ''}
+
+                ${order.status === 'dispatched' ? `
+                  <button 
+                    onclick="updateOrderStatus('${orderId}', 'delivered')" 
+                    class="px-2.5 py-1 bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-500/30 text-cyan-300 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+                  >
+                    📦 Delivered
+                  </button>
+                ` : ''}
+              </div>
+
+              <button 
+                onclick="openOrderModal('${orderId}')" 
+                class="px-2.5 py-1 bg-obsidian-700 hover:bg-obsidian-600 border gold-border text-gold-400 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+              >
+                Details & Slip ➔
+              </button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    // Update Status Action
+    async function updateOrderStatus(orderId, newStatus) {
+      if (!token) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/owner/orders/${encodeURIComponent(orderId)}/status`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          showToast("Status Updated", `Order #${orderId} marked as ${newStatus}`, "✓");
+          fetchOrders(true);
+          if (activeModalOrder && activeModalOrder.order_id === orderId) {
+            closeOrderModal();
+          }
+        } else {
+          alert(data.error || "Could not update status");
+        }
+      } catch (err) {
+        alert("Failed to connect to server");
+      }
+    }
+
+    // Modal Details Opener
+    function openOrderModal(orderId) {
+      const order = cachedOrders.find(o => o.order_id === orderId || o.id === orderId);
+      if (!order) return;
+      activeModalOrder = order;
+
+      const cleanPhone = String(order.customer_phone || "").replace(/[^0-9]/g, '');
+      const itemsListEl = document.getElementById("modal-items-list");
+      const addressText = [order.address, order.city].filter(Boolean).join(', ') || order.city || 'Karachi';
+
+      document.getElementById("modal-order-id").textContent = "#" + (order.order_id || order.id);
+      document.getElementById("modal-status-badge").innerHTML = getStatusBadge(order.status);
+      document.getElementById("modal-order-time").textContent = new Date(order.created_at || order.date || Date.now()).toLocaleString();
+      document.getElementById("modal-customer-name").textContent = order.customer_name || 'Customer';
+      document.getElementById("modal-customer-phone").textContent = "+" + cleanPhone;
+      document.getElementById("modal-call-btn").href = `tel:${cleanPhone}`;
+      document.getElementById("modal-wa-btn").href = `https://wa.me/${cleanPhone}`;
+      document.getElementById("modal-address").textContent = addressText;
+      document.getElementById("modal-total-amount").textContent = fmt(order.total || order.sub);
+      document.getElementById("modal-payment-method").textContent = (order.payment_method || "Cash on Delivery") + " (COD)";
+
+      // Notes
+      const noteBox = document.getElementById("modal-note-box");
+      if (order.notes) {
+        document.getElementById("modal-notes").textContent = order.notes;
+        noteBox.classList.remove("hidden");
+      } else {
+        noteBox.classList.add("hidden");
+      }
+
+      // Items
+      itemsListEl.innerHTML = (order.items || []).map(i => `
+        <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
+          <div>
+            <p class="font-bold text-white text-xs">${i.name}</p>
+            ${i.variant ? `<p class="text-[10px] text-gray-400">${i.variant}</p>` : ''}
+          </div>
+          <div class="text-right font-mono">
+            <span>x${i.qty || 1}</span> · <span class="text-gold-400">${fmt((i.price || 0) * (i.qty || 1))}</span>
+          </div>
+        </div>
+      `).join("");
+
+      // Status buttons inside modal
+      document.querySelectorAll(".status-action-btn").forEach(btn => {
+        btn.onclick = () => updateOrderStatus(order.order_id || order.id, btn.dataset.status);
+      });
+
+      document.getElementById("order-modal").classList.remove("hidden");
+    }
+
+    function closeOrderModal() {
+      document.getElementById("order-modal").classList.add("hidden");
+      activeModalOrder = null;
+    }
+
+    document.getElementById("modal-close-btn")?.addEventListener("click", closeOrderModal);
+    document.getElementById("modal-done-btn")?.addEventListener("click", closeOrderModal);
+
+    // Print Courier Packing Slip
+    document.getElementById("modal-print-btn")?.addEventListener("click", () => {
+      if (!activeModalOrder) return;
+      const o = activeModalOrder;
+      const cleanPhone = String(o.customer_phone || "").replace(/[^0-9]/g, '');
+      const printArea = document.getElementById("print-area");
+      
+      printArea.innerHTML = `
+        <div style="font-family: sans-serif; padding: 20px; border: 2px dashed #000; max-width: 500px; margin: 0 auto;">
+          <h2 style="margin: 0; text-align: center; font-size: 20px;">TAJ LEATHERS</h2>
+          <p style="margin: 2px 0 15px; text-align: center; font-size: 11px; text-transform: uppercase;">Handcrafted Pure Leather Goods · Karachi, Pakistan</p>
+          <hr style="border: 0; border-top: 1px solid #000; margin-bottom: 12px;" />
+          
+          <table style="width: 100%; font-size: 13px; line-height: 1.6;">
+            <tr><td><strong>Order ID:</strong></td><td>#${o.order_id || o.id}</td></tr>
+            <tr><td><strong>Date:</strong></td><td>${new Date(o.created_at || Date.now()).toLocaleDateString()}</td></tr>
+            <tr><td><strong>Customer:</strong></td><td><strong>${o.customer_name}</strong></td></tr>
+            <tr><td><strong>Phone:</strong></td><td>+${cleanPhone}</td></tr>
+            <tr><td><strong>Address:</strong></td><td>${[o.address, o.city].filter(Boolean).join(', ')}</td></tr>
+            ${o.notes ? `<tr><td><strong>Instructions:</strong></td><td>${o.notes}</td></tr>` : ''}
+          </table>
+
+          <hr style="border: 0; border-top: 1px solid #000; margin: 12px 0;" />
+          <h4 style="margin: 0 0 6px; font-size: 13px;">Items in Package:</h4>
+          <ul style="margin: 0; padding-left: 20px; font-size: 12px;">
+            ${(o.items || []).map(i => `<li>${i.qty}x ${i.name} ${i.variant ? '(' + i.variant + ')' : ''}</li>`).join('')}
+          </ul>
+
+          <hr style="border: 0; border-top: 1px solid #000; margin: 12px 0;" />
+          <table style="width: 100%; font-size: 14px;">
+            <tr>
+              <td><strong>TOTAL CASH ON DELIVERY:</strong></td>
+              <td style="text-align: right; font-size: 16px;"><strong>Rs ${Number(o.total || 0).toLocaleString()}</strong></td>
+            </tr>
+          </table>
+          <p style="margin-top: 20px; font-size: 10px; text-align: center; color: #555;">Thank you for shopping handcrafted elegance with Taj Leathers!</p>
+        </div>
+      `;
+      window.print();
+    });
+
+    // Check WhatsApp Server Status
+    async function fetchWhatsAppStatus() {
+      if (!token) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/v1/owner/whatsapp-status`, {
+          headers: { "Authorization": `Bearer ${token}` }
+        });
+        const data = await res.json();
+        const indicator = document.getElementById("wa-indicator");
+        const text = document.getElementById("wa-status-text");
+
+        if (data.success && data.connected) {
+          indicator.className = "w-2 h-2 rounded-full bg-emerald-500 inline-block pulse-dot";
+          text.textContent = `WhatsApp Online (${data.phone || '+92 314 8253657'})`;
+          text.className = "text-emerald-400 font-medium";
+        } else {
+          indicator.className = "w-2 h-2 rounded-full bg-red-500 inline-block";
+          text.textContent = "WhatsApp Offline (Orders Safe in Database)";
+          text.className = "text-red-400 font-medium";
+        }
+      } catch (e) {
+        document.getElementById("wa-status-text").textContent = "Checking connection...";
+      }
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>
