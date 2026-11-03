@@ -285,9 +285,16 @@
           <button id="clear-search-btn" class="hidden absolute right-3 top-2.5 text-gray-400 hover:text-white text-xs">✕</button>
         </div>
 
+        <!-- Channel Filter Pills -->
+        <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar pb-1">
+          <button class="channel-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-gold-500 text-black transition-all" data-channel="all">All Channels</button>
+          <button class="channel-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900 transition-all" data-channel="whatsapp">💬 WhatsApp Orders (<span id="tab-cnt-whatsapp">0</span>)</button>
+          <button class="channel-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 border gold-border hover:text-white transition-all" data-channel="website">🌐 Website Orders (<span id="tab-cnt-website">0</span>)</button>
+        </div>
+
         <!-- Scrollable Status Pills -->
         <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar py-1">
-          <button class="status-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-gold-500 text-black transition-all" data-status="all">All Orders (<span id="tab-cnt-all">0</span>)</button>
+          <button class="status-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-gold-500 text-black transition-all" data-status="all">All Statuses (<span id="tab-cnt-all">0</span>)</button>
           <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="sent">Pending (<span id="tab-cnt-sent">0</span>)</button>
           <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="confirmed">Confirmed (<span id="tab-cnt-confirmed">0</span>)</button>
           <button class="status-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 hover:text-white border gold-border transition-all" data-status="paid">Advance Paid (<span id="tab-cnt-paid">0</span>)</button>
@@ -537,6 +544,17 @@
       return "Rs " + Number(val || 0).toLocaleString();
     }
 
+        let currentChannelFilter = "all";
+
+    // Channel Badge Helper
+    function getChannelBadge(source, paymentMethod) {
+      const isWa = (source || "").toLowerCase().includes("whatsapp") || (paymentMethod || "").toLowerCase().includes("whatsapp");
+      if (isWa) {
+        return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 inline-flex items-center gap-1">💬 WhatsApp</span>`;
+      }
+      return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold-500/15 text-gold-300 border border-gold-500/30 inline-flex items-center gap-1">🌐 Website</span>`;
+    }
+
     // Status Badge Helper
     function getStatusBadge(status) {
       const s = (status || "").toLowerCase();
@@ -652,6 +670,23 @@
       showToast("Sound Settings", soundEnabled ? "Notification sound enabled" : "Notification sound muted", soundEnabled ? "🔔" : "🔕");
     });
 
+        // Channel Tab Filters
+    document.querySelectorAll(".channel-tab-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".channel-tab-btn").forEach(b => {
+          b.classList.remove("bg-gold-500", "text-black");
+          if (b.dataset.channel === "whatsapp") {
+            b.className = "channel-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-emerald-950/80 text-emerald-300 border border-emerald-500/40 hover:bg-emerald-900 transition-all";
+          } else {
+            b.className = "channel-tab-btn px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-obsidian-800 text-gray-300 border gold-border hover:text-white transition-all";
+          }
+        });
+        btn.className = "channel-tab-btn active px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap bg-gold-500 text-black transition-all";
+        currentChannelFilter = btn.dataset.channel;
+        renderOrders();
+      });
+    });
+
     // Status Tab Filters
     document.querySelectorAll(".status-tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -749,6 +784,13 @@
       document.getElementById("tab-cnt-dispatched").textContent = counts.dispatched || 0;
       document.getElementById("tab-cnt-delivered").textContent = counts.delivered || 0;
       document.getElementById("tab-cnt-cancelled").textContent = counts.cancelled || 0;
+      const waCount = cachedOrders.filter(o => (o.source || "").toLowerCase().includes("whatsapp") || (o.payment_method || "").toLowerCase().includes("whatsapp")).length;
+      const webCount = cachedOrders.length - waCount;
+      const waTabCnt = document.getElementById("tab-cnt-whatsapp");
+      const webTabCnt = document.getElementById("tab-cnt-website");
+      if (waTabCnt) waTabCnt.textContent = waCount;
+      if (webTabCnt) webTabCnt.textContent = webCount;
+
     }
 
     // Render Order Cards
@@ -761,6 +803,12 @@
       if (currentFilterStatus !== "all") {
         filtered = filtered.filter(o => (o.status || "").toLowerCase() === currentFilterStatus);
       }
+      if (currentChannelFilter === "whatsapp") {
+        filtered = filtered.filter(o => (o.source || "").toLowerCase().includes("whatsapp") || (o.payment_method || "").toLowerCase().includes("whatsapp"));
+      } else if (currentChannelFilter === "website") {
+        filtered = filtered.filter(o => !(o.source || "").toLowerCase().includes("whatsapp") && !(o.payment_method || "").toLowerCase().includes("whatsapp"));
+      }
+
 
       if (currentSearchQuery) {
         filtered = filtered.filter(o => 
@@ -793,6 +841,7 @@
             <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5">
               <div class="flex items-center gap-2">
                 <span class="font-serif font-bold text-gold-400 text-sm tracking-wide cursor-pointer hover:underline" onclick="openOrderModal('${orderId}')">#${orderId}</span>
+                ${getChannelBadge(order.source, order.payment_method)}
                 ${getStatusBadge(order.status)}
               </div>
               <span class="text-[11px] text-gray-500">${timeAgo(order.created_at || order.date)}</span>

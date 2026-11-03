@@ -595,7 +595,7 @@ function forwardOrderToApi(order) {
       items: payloadItems,
       total: totalAmount,
       currency: "PKR",
-      source: "taj-leathers-website"
+      source: (order && order.source) ? order.source : "website"
     };
 
     fetch(ORDER_API_URL.replace(/\/$/, "") + "/api/v1/orders", {

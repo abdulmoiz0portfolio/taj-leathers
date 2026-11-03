@@ -280,6 +280,7 @@ function waLink(order) {
 document.getElementById("wa-btn").addEventListener("click", () => {
   const num = "TJ-" + Date.now().toString().slice(-6);
   const order = buildOrder(num);
+  order.source = "whatsapp";
   saveOrder(order);
   forwardOrderToApi(order); // Auto-forward order to Automatixes API
   clearCart();
