@@ -193,6 +193,15 @@
           <span class="hidden sm:inline text-[11px]" id="sync-text">Live (8s)</span>
         </button>
 
+                <!-- Test Alert Button -->
+        <button 
+          id="test-alert-btn"
+          title="Test Notification Sound & Vibration"
+          class="px-2.5 py-1.5 rounded-xl bg-obsidian-800 border gold-border text-gold-400 hover:bg-gold-500 hover:text-black active:scale-95 transition-all text-xs flex items-center gap-1 font-semibold"
+        >
+          <span>🔔 Test Alert</span>
+        </button>
+
         <!-- Sound Toggle -->
         <button 
           id="sound-toggle-btn"
@@ -212,6 +221,18 @@
         </button>
       </div>
     </header>
+
+        <!-- Notification Permission Request Banner -->
+    <div id="notify-perm-banner" class="hidden bg-gradient-to-r from-emerald-950 via-obsidian-800 to-emerald-950 border-b border-emerald-500/40 text-emerald-300 px-4 py-2.5 text-xs flex items-center justify-between font-medium shadow-md">
+      <div class="flex items-center gap-2">
+        <span class="text-base animate-bounce">🔔</span>
+        <span><strong>Enable Sound & Phone Alerts:</strong> Allow notifications to receive instant audio dings and phone alerts when an order arrives!</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="enable-notify-btn" class="bg-emerald-500 text-black px-3 py-1 rounded-lg text-xs font-bold hover:bg-emerald-400 active:scale-95 transition-all whitespace-nowrap shadow-sm">Allow Notifications</button>
+        <button id="close-notify-banner" class="text-emerald-400 hover:text-white font-bold text-sm px-1">✕</button>
+      </div>
+    </div>
 
     <!-- Android Install PWA Banner (conditional) -->
     <div id="android-install-banner" class="hidden bg-gradient-to-r from-gold-600 via-gold-500 to-gold-600 text-black px-4 py-2 text-xs flex items-center justify-between font-semibold shadow-md">
@@ -436,51 +457,264 @@
     let token = localStorage.getItem("taj_owner_token") || "";
     let cachedOrders = [];
     let knownOrderIds = new Set();
+    let hasInitialFetchCompleted = false;
     let currentFilterStatus = "all";
+    let currentChannelFilter = "all";
     let currentSearchQuery = "";
     let pollingInterval = null;
     let deferredPrompt = null;
     let soundEnabled = true;
     let activeModalOrder = null;
+    let ws = null;
+    let wsReconnectTimer = null;
+    let titleFlashTimer = null;
 
-    // Web Audio Synthesizer (No external audio file needed!)
+    // ==================== AUDIO & VIBRATION ENGINE ====================
+    let audioCtx = null;
+    function getAudioContext() {
+      try {
+        if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
+          const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx && audioCtx.state === "suspended") {
+          audioCtx.resume().catch(() => {});
+        }
+        return audioCtx;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function unlockAudioContext() {
+      const ctx = getAudioContext();
+      if (ctx && ctx.state === "suspended") {
+        ctx.resume().catch(() => {});
+      }
+    }
+
+    // Unlock on any first interaction anywhere on page
+    ["click", "touchstart", "keydown"].forEach((evt) => {
+      document.addEventListener(evt, unlockAudioContext, { passive: true });
+    });
+
+    // 3-Tone Crystal Cash Register / Notification Chime (High volume & clarity)
     function playOrderChime() {
       if (!soundEnabled) return;
       try {
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        const ctx = new AudioContext();
+        const ctx = getAudioContext();
+        if (ctx) {
+          if (ctx.state === "suspended") ctx.resume().catch(() => {});
+          const now = ctx.currentTime;
 
-        // High pleasant ding
-        const osc1 = ctx.createOscillator();
-        const gain1 = ctx.createGain();
-        osc1.type = "sine";
-        osc1.frequency.setValueAtTime(880, ctx.currentTime); // A5
-        osc1.frequency.exponentialRampToValueAtTime(1760, ctx.currentTime + 0.15); // A6
-        gain1.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-        osc1.connect(gain1);
-        gain1.connect(ctx.destination);
-        osc1.start();
-        osc1.stop(ctx.currentTime + 0.4);
+          // Note 1: D5 (587.33 Hz)
+          const osc1 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(587.33, now);
+          gain1.gain.setValueAtTime(0.7, now);
+          gain1.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc1.connect(gain1);
+          gain1.connect(ctx.destination);
+          osc1.start(now);
+          osc1.stop(now + 0.25);
 
-        // Second harmonic chime
-        setTimeout(() => {
+          // Note 2: A5 (880 Hz)
           const osc2 = ctx.createOscillator();
           const gain2 = ctx.createGain();
           osc2.type = "sine";
-          osc2.frequency.setValueAtTime(1320, ctx.currentTime); // E6
-          gain2.gain.setValueAtTime(0.25, ctx.currentTime);
-          gain2.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+          osc2.frequency.setValueAtTime(880, now + 0.12);
+          gain2.gain.setValueAtTime(0.8, now + 0.12);
+          gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.42);
           osc2.connect(gain2);
           gain2.connect(ctx.destination);
-          osc2.start();
-          osc2.stop(ctx.currentTime + 0.5);
-        }, 120);
-      } catch (e) {}
+          osc2.start(now + 0.12);
+          osc2.stop(now + 0.42);
+
+          // Note 3: High Crystal D6 (1174.66 Hz)
+          const osc3 = ctx.createOscillator();
+          const gain3 = ctx.createGain();
+          osc3.type = "triangle";
+          osc3.frequency.setValueAtTime(1174.66, now + 0.28);
+          gain3.gain.setValueAtTime(0.9, now + 0.28);
+          gain3.gain.exponentialRampToValueAtTime(0.005, now + 0.85);
+          osc3.connect(gain3);
+          gain3.connect(ctx.destination);
+          osc3.start(now + 0.28);
+          osc3.stop(now + 0.85);
+        }
+      } catch (err) {
+        console.warn("Audio chime error:", err);
+      }
     }
 
-    // Android PWA Install Prompt Listener
+    // ==================== SYSTEM NOTIFICATIONS ENGINE ====================
+    function checkNotificationPermission() {
+      if (!("Notification" in window)) return;
+      const banner = document.getElementById("notify-perm-banner");
+      if (!banner) return;
+      if (Notification.permission === "default") {
+        banner.classList.remove("hidden");
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    function sendSystemNotification(order) {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const title = `🚨 Naya Order! #${order.order_id}`;
+      const itemText = Array.isArray(order.items) && order.items.length > 0 
+        ? order.items.map(i => `${i.qty || 1}x ${i.name}`).join(", ") 
+        : "Taj Leather Product";
+      const body = `${order.customer_name || 'Customer'} ne Rs ${Number(order.total || 0).toLocaleString()} ka order place kiya hai (${order.city || 'Pakistan'})\n🛍️ ${itemText}`;
+
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.ready.then((reg) => {
+          reg.showNotification(title, {
+            body,
+            icon: "./assets/apple-touch-icon.png",
+            badge: "./assets/apple-touch-icon.png",
+            vibrate: [400, 200, 400, 200, 600],
+            tag: `order-${order.order_id}`,
+            renotify: true,
+            requireInteraction: true,
+            data: { url: "./admin.html" }
+          });
+        }).catch(() => {
+          try {
+            new Notification(title, { body, icon: "./assets/apple-touch-icon.png" });
+          } catch (e) {}
+        });
+      } else {
+        try {
+          new Notification(title, { body, icon: "./assets/apple-touch-icon.png" });
+        } catch (e) {}
+      }
+    }
+
+    function flashTitle(newText) {
+      if (titleFlashTimer) clearInterval(titleFlashTimer);
+      const originalTitle = "TAJ LEATHERS — Store Owner Portal";
+      let toggle = false;
+      let count = 0;
+      titleFlashTimer = setInterval(() => {
+        document.title = toggle ? newText : originalTitle;
+        toggle = !toggle;
+        count++;
+        if (count > 25) {
+          clearInterval(titleFlashTimer);
+          document.title = originalTitle;
+        }
+      }, 900);
+    }
+
+    window.addEventListener("focus", () => {
+      if (titleFlashTimer) {
+        clearInterval(titleFlashTimer);
+        document.title = "TAJ LEATHERS — Store Owner Portal";
+      }
+    });
+
+    // Master Trigger For New Incoming Order
+    function triggerNewOrderAlert(order) {
+      // 1. Audio Sound Chime
+      playOrderChime();
+
+      // 2. Physical Vibration (Android phone)
+      if ("vibrate" in navigator) {
+        try {
+          navigator.vibrate([400, 200, 400, 200, 600]);
+        } catch (e) {}
+      }
+
+      // 3. System Push / Native Notification
+      sendSystemNotification(order);
+
+      // 4. In-App Toast
+      showToast(
+        "🚨 NAYA ORDER RECEIVE HUA!", 
+        `#${order.order_id} - ${order.customer_name || 'Customer'} (${fmt(order.total)})`, 
+        "🛍️"
+      );
+
+      // 5. Flashing Tab Title
+      flashTitle(`🚨 (1) NAYA ORDER #${order.order_id}!`);
+    }
+
+    // ==================== REAL-TIME WEBSOCKET ENGINE ====================
+    function connectWebSocket() {
+      if (!token) return;
+      if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
+      try {
+        const wsUrl = `wss://bot.automatixes.com?token=${encodeURIComponent(token)}`;
+        ws = new WebSocket(wsUrl);
+
+        ws.onopen = () => {
+          const syncText = document.getElementById("sync-text");
+          if (syncText) syncText.textContent = "Live (Instant WS)";
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            if (msg.type === "ORDER_UPDATE" && msg.payload && msg.payload.order) {
+              const order = msg.payload.order;
+              handleRealtimeOrder(order);
+            }
+          } catch (e) {
+            console.warn("[WS] Error parsing message:", e);
+          }
+        };
+
+        ws.onclose = () => {
+          const syncText = document.getElementById("sync-text");
+          if (syncText) syncText.textContent = "Live (Poll 6s)";
+          if (wsReconnectTimer) clearTimeout(wsReconnectTimer);
+          wsReconnectTimer = setTimeout(connectWebSocket, 5000);
+        };
+
+        ws.onerror = () => {
+          try { ws.close(); } catch (e) {}
+        };
+      } catch (e) {
+        console.warn("[WS] Init error:", e);
+      }
+    }
+
+    function handleRealtimeOrder(order) {
+      if (!order || !order.order_id) return;
+      const isNew = !knownOrderIds.has(order.order_id);
+      knownOrderIds.add(order.order_id);
+
+      const existingIndex = cachedOrders.findIndex((o) => o.order_id === order.order_id);
+      if (existingIndex !== -1) {
+        cachedOrders[existingIndex] = order;
+      } else {
+        cachedOrders.unshift(order);
+        if (hasInitialFetchCompleted && isNew) {
+          triggerNewOrderAlert(order);
+        }
+      }
+
+      recalculateCountsFromCache();
+      renderOrders();
+    }
+
+    function recalculateCountsFromCache() {
+      const counts = {
+        all: cachedOrders.length,
+        sent: cachedOrders.filter(o => (o.status || '').toLowerCase() === 'sent').length,
+        confirmed: cachedOrders.filter(o => (o.status || '').toLowerCase() === 'confirmed').length,
+        paid: cachedOrders.filter(o => (o.status || '').toLowerCase() === 'paid').length,
+        dispatched: cachedOrders.filter(o => (o.status || '').toLowerCase() === 'dispatched').length,
+        delivered: cachedOrders.filter(o => (o.status || '').toLowerCase() === 'delivered').length,
+        cancelled: cachedOrders.filter(o => (o.status || '').toLowerCase() === 'cancelled').length,
+      };
+      updateCounts(counts);
+    }
+
+    // ==================== PWA & SERVICE WORKER ====================
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       deferredPrompt = e;
@@ -503,14 +737,13 @@
       document.getElementById("android-install-banner")?.classList.add("hidden");
     });
 
-    // Register Service Worker
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
         navigator.serviceWorker.register("./sw.js").catch(() => {});
       });
     }
 
-    // Toast Notification helper
+    // ==================== UI HELPERS ====================
     function showToast(title, msg, icon = "🔔") {
       const toast = document.getElementById("toast");
       document.getElementById("toast-title").textContent = title;
@@ -521,10 +754,9 @@
       setTimeout(() => {
         toast.classList.remove("translate-y-0", "opacity-100");
         toast.classList.add("translate-y-24", "opacity-0");
-      }, 4000);
+      }, 4500);
     }
 
-    // Relative Time Helper
     function timeAgo(dateString) {
       if (!dateString) return "";
       const date = new Date(dateString);
@@ -539,14 +771,10 @@
       return `${days}d ago`;
     }
 
-    // Format currency
     function fmt(val) {
       return "Rs " + Number(val || 0).toLocaleString();
     }
 
-        let currentChannelFilter = "all";
-
-    // Channel Badge Helper
     function getChannelBadge(source, paymentMethod) {
       const isWa = (source || "").toLowerCase().includes("whatsapp") || (paymentMethod || "").toLowerCase().includes("whatsapp");
       if (isWa) {
@@ -555,7 +783,6 @@
       return `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold-500/15 text-gold-300 border border-gold-500/30 inline-flex items-center gap-1">🌐 Website</span>`;
     }
 
-    // Status Badge Helper
     function getStatusBadge(status) {
       const s = (status || "").toLowerCase();
       switch (s) {
@@ -576,7 +803,7 @@
       }
     }
 
-    // Initialize App
+    // ==================== APP LIFECYCLE ====================
     function init() {
       if (token) {
         showApp();
@@ -589,23 +816,42 @@
       document.getElementById("login-view").classList.remove("hidden");
       document.getElementById("app-view").classList.add("hidden");
       if (pollingInterval) clearInterval(pollingInterval);
+      if (ws) {
+        try { ws.close(); } catch (e) {}
+      }
     }
 
     function showApp() {
       document.getElementById("login-view").classList.add("hidden");
       document.getElementById("app-view").classList.remove("hidden");
+      checkNotificationPermission();
+      connectWebSocket();
       fetchOrders();
       fetchWhatsAppStatus();
       if (pollingInterval) clearInterval(pollingInterval);
       pollingInterval = setInterval(() => {
-        fetchOrders(true); // silent background poll
+        fetchOrders(true); // background silent poll
         fetchWhatsAppStatus();
-      }, 8000);
+      }, 6000);
     }
 
+    // Visibility wake up
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        unlockAudioContext();
+        fetchOrders(true);
+        fetchWhatsAppStatus();
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
+          connectWebSocket();
+        }
+      }
+    });
+
+    // ==================== EVENT LISTENERS ====================
     // Login Form Submit
     document.getElementById("login-form").addEventListener("submit", async (e) => {
       e.preventDefault();
+      unlockAudioContext();
       const user = document.getElementById("login-username").value.trim();
       const pass = document.getElementById("login-password").value.trim();
       const btn = document.getElementById("login-btn");
@@ -653,6 +899,7 @@
 
     // Manual Refresh
     document.getElementById("manual-refresh-btn").addEventListener("click", () => {
+      unlockAudioContext();
       const icon = document.getElementById("refresh-icon");
       icon.classList.add("animate-spin");
       fetchOrders().finally(() => {
@@ -661,8 +908,42 @@
       fetchWhatsAppStatus();
     });
 
+    // Test Alert Button (Instant Verification for User)
+    document.getElementById("test-alert-btn")?.addEventListener("click", () => {
+      unlockAudioContext();
+      triggerNewOrderAlert({
+        order_id: "TEST-ALERT",
+        customer_name: "Test Customer (Alert Verification)",
+        total: 4500,
+        city: "Karachi",
+        items: [{ name: "Handcrafted Men Leather Wallet", qty: 1 }]
+      });
+    });
+
+    // Notification Permission Request Buttons
+    document.getElementById("enable-notify-btn")?.addEventListener("click", () => {
+      if ("Notification" in window) {
+        Notification.requestPermission().then((perm) => {
+          checkNotificationPermission();
+          if (perm === "granted") {
+            unlockAudioContext();
+            playOrderChime();
+            if ("vibrate" in navigator) navigator.vibrate([200, 100, 200]);
+            showToast("Notifications Enabled! ✅", "Ab har naye order par phone notification aur sound alert aayega.", "🔔");
+          } else {
+            showToast("Notification Blocked", "Browser settings mein ja kar notification allow karein.", "⚠️");
+          }
+        });
+      }
+    });
+
+    document.getElementById("close-notify-banner")?.addEventListener("click", () => {
+      document.getElementById("notify-perm-banner")?.classList.add("hidden");
+    });
+
     // Sound Toggle
     document.getElementById("sound-toggle-btn").addEventListener("click", () => {
+      unlockAudioContext();
       soundEnabled = !soundEnabled;
       const btn = document.getElementById("sound-toggle-btn");
       btn.classList.toggle("text-gold-400", soundEnabled);
@@ -670,7 +951,7 @@
       showToast("Sound Settings", soundEnabled ? "Notification sound enabled" : "Notification sound muted", soundEnabled ? "🔔" : "🔕");
     });
 
-        // Channel Tab Filters
+    // Channel Tab Filters
     document.querySelectorAll(".channel-tab-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".channel-tab-btn").forEach(b => {
@@ -716,7 +997,7 @@
       renderOrders();
     });
 
-    // Fetch Orders from API
+    // ==================== API FETCH ORDERS ====================
     async function fetchOrders(isSilent = false) {
       if (!token) return;
       if (!isSilent) {
@@ -737,26 +1018,22 @@
 
         const data = await res.json();
         if (data.success && Array.isArray(data.orders)) {
-          // Detect brand new orders for Audio Chime
-          if (knownOrderIds.size > 0) {
-            let hasNew = false;
-            let latestOrder = null;
-            data.orders.forEach(o => {
-              if (o.order_id && !knownOrderIds.has(o.order_id)) {
-                hasNew = true;
-                latestOrder = o;
-              }
+          if (!hasInitialFetchCompleted) {
+            // Initial load: record existing IDs without alerting
+            data.orders.forEach((o) => {
+              if (o.order_id) knownOrderIds.add(o.order_id);
             });
-            if (hasNew && latestOrder) {
-              playOrderChime();
-              showToast("New Order Received!", `#${latestOrder.order_id} - ${latestOrder.customer_name} (${fmt(latestOrder.total)})`, "🛍️");
+            hasInitialFetchCompleted = true;
+          } else {
+            // Subsequent polls: check for genuinely new orders
+            const newOrders = data.orders.filter((o) => o.order_id && !knownOrderIds.has(o.order_id));
+            if (newOrders.length > 0) {
+              newOrders.forEach((o) => {
+                knownOrderIds.add(o.order_id);
+                triggerNewOrderAlert(o);
+              });
             }
           }
-
-          // Populate known IDs
-          data.orders.forEach(o => {
-            if (o.order_id) knownOrderIds.add(o.order_id);
-          });
 
           cachedOrders = data.orders;
           updateCounts(data.counts || {});
@@ -769,7 +1046,6 @@
       }
     }
 
-    // Update Metrics
     function updateCounts(counts) {
       document.getElementById("stat-total").textContent = counts.all || cachedOrders.length || 0;
       document.getElementById("stat-sent").textContent = counts.sent || 0;
@@ -784,21 +1060,21 @@
       document.getElementById("tab-cnt-dispatched").textContent = counts.dispatched || 0;
       document.getElementById("tab-cnt-delivered").textContent = counts.delivered || 0;
       document.getElementById("tab-cnt-cancelled").textContent = counts.cancelled || 0;
+      
       const waCount = cachedOrders.filter(o => (o.source || "").toLowerCase().includes("whatsapp") || (o.payment_method || "").toLowerCase().includes("whatsapp")).length;
       const webCount = cachedOrders.length - waCount;
       const waTabCnt = document.getElementById("tab-cnt-whatsapp");
       const webTabCnt = document.getElementById("tab-cnt-website");
       if (waTabCnt) waTabCnt.textContent = waCount;
       if (webTabCnt) webTabCnt.textContent = webCount;
-
     }
 
-    // Render Order Cards
+    // ==================== RENDER ORDERS ====================
     function renderOrders() {
       const listEl = document.getElementById("orders-list");
       const emptyEl = document.getElementById("orders-empty");
 
-      let filtered = cachedOrders;
+      let filtered = [...cachedOrders];
 
       if (currentFilterStatus !== "all") {
         filtered = filtered.filter(o => (o.status || "").toLowerCase() === currentFilterStatus);
@@ -809,35 +1085,32 @@
         filtered = filtered.filter(o => !(o.source || "").toLowerCase().includes("whatsapp") && !(o.payment_method || "").toLowerCase().includes("whatsapp"));
       }
 
-
       if (currentSearchQuery) {
         filtered = filtered.filter(o => 
-          (o.order_id && o.order_id.toLowerCase().includes(currentSearchQuery)) ||
-          (o.customer_name && o.customer_name.toLowerCase().includes(currentSearchQuery)) ||
-          (o.customer_phone && o.customer_phone.includes(currentSearchQuery))
+          (o.order_id || "").toLowerCase().includes(currentSearchQuery) ||
+          (o.customer_name || "").toLowerCase().includes(currentSearchQuery) ||
+          (o.customer_phone || "").includes(currentSearchQuery) ||
+          (o.city || "").toLowerCase().includes(currentSearchQuery)
         );
       }
 
-      if (!filtered || filtered.length === 0) {
+      if (filtered.length === 0) {
         listEl.innerHTML = "";
         emptyEl.classList.remove("hidden");
         return;
       }
 
       emptyEl.classList.add("hidden");
-
-      // Sort newest first
-      filtered.sort((a, b) => new Date(b.created_at || b.date || 0) - new Date(a.created_at || a.date || 0));
-
       listEl.innerHTML = filtered.map(order => {
-        const orderId = order.order_id || order.id || "N/A";
-        const cleanPhone = String(order.customer_phone || "").replace(/[^0-9]/g, '');
-        const itemsSummary = (order.items || []).map(i => `${i.qty || 1}x ${i.name}${i.variant ? ' (' + i.variant + ')' : ''}`).join(', ') || 'Custom Leather Item';
-        const addressText = [order.address, order.city].filter(Boolean).join(', ') || order.city || 'Karachi';
+        const orderId = order.order_id || "UNKNOWN";
+        const cleanPhone = (order.customer_phone || "").replace(/[^0-9]/g, "");
+        const waPhone = cleanPhone.startsWith("0") ? "92" + cleanPhone.slice(1) : cleanPhone;
+        const itemCount = Array.isArray(order.items) ? order.items.reduce((acc, i) => acc + (Number(i.qty) || 1), 0) : 1;
+        const firstItem = Array.isArray(order.items) && order.items[0] ? order.items[0].name : "Handcrafted Product";
 
         return `
-          <div class="bg-obsidian-800 border gold-border hover:border-gold-500/50 rounded-2xl p-4 shadow-md transition-all">
-            <!-- Top Row: Order ID, Status, Timestamp -->
+          <div class="bg-obsidian-800 border gold-border rounded-xl p-3.5 shadow-sm hover:border-gold-500/60 transition-all flex flex-col gap-2.5">
+            <!-- Header Row -->
             <div class="flex items-center justify-between border-b border-gray-800/80 pb-2.5">
               <div class="flex items-center gap-2">
                 <span class="font-serif font-bold text-gold-400 text-sm tracking-wide cursor-pointer hover:underline" onclick="openOrderModal('${orderId}')">#${orderId}</span>
@@ -847,96 +1120,102 @@
               <span class="text-[11px] text-gray-500">${timeAgo(order.created_at || order.date)}</span>
             </div>
 
-            <!-- Middle Row: Customer Info & Call / WhatsApp buttons -->
-            <div class="py-2.5 flex items-center justify-between">
-              <div>
-                <h3 class="text-sm font-bold text-white">${order.customer_name || 'Customer'}</h3>
-                <p class="text-xs text-gray-400 font-mono mt-0.5">+${cleanPhone}</p>
+            <!-- Customer & Item Row -->
+            <div class="flex items-start justify-between gap-3 text-xs">
+              <div class="flex-1 min-w-0">
+                <p class="font-bold text-white truncate text-sm">${order.customer_name || "Customer"}</p>
+                <p class="text-gray-400 text-[11px] truncate mt-0.5">
+                  <span class="text-gold-300 font-medium">${order.city || "Pakistan"}</span> • ${itemCount} item(s): ${firstItem}
+                </p>
+                ${order.address ? `<p class="text-gray-500 text-[10px] truncate mt-0.5">📍 ${order.address}</p>` : ""}
               </div>
-              <div class="flex items-center gap-2">
+              <div class="text-right whitespace-nowrap">
+                <span class="font-serif font-bold text-gold-400 text-sm sm:text-base">${fmt(order.total)}</span>
+                <p class="text-[10px] text-gray-500">COD / Rs 200 Adv</p>
+              </div>
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-gray-800/60 text-xs">
+              <!-- Contact shortcuts -->
+              <div class="flex items-center gap-1.5">
                 <a 
                   href="tel:${cleanPhone}" 
-                  class="px-3 py-1.5 bg-obsidian-700 hover:bg-obsidian-600 border gold-border rounded-xl text-xs text-gold-400 font-semibold flex items-center gap-1 active:scale-95 transition-all shadow-sm"
-                  title="Call Customer"
+                  class="px-2.5 py-1 rounded-lg bg-obsidian-700 hover:bg-obsidian-600 text-gray-300 hover:text-white border border-gray-700 inline-flex items-center gap-1 text-[11px] transition-colors"
                 >
-                  <span>📞</span> Call
+                  <svg class="w-3 h-3 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+                  <span>Call</span>
                 </a>
+
                 <a 
-                  href="https://wa.me/${cleanPhone}" 
-                  target="_blank" 
-                  rel="noopener"
-                  class="px-3 py-1.5 bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 rounded-xl text-xs text-emerald-300 font-semibold flex items-center gap-1 active:scale-95 transition-all shadow-sm"
-                  title="Chat on WhatsApp"
+                  href="https://wa.me/${waPhone}?text=${encodeURIComponent(`Assalam-o-Alaikum ${order.customer_name}! Taj Leathers se aapke order #${orderId} ke hawalay se rabta kar rahe hain.`)}" 
+                  target="_blank"
+                  class="px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 inline-flex items-center gap-1 text-[11px] transition-colors"
                 >
-                  <span>💬</span> WhatsApp
+                  <svg class="w-3 h-3 text-emerald-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.771-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.312.045-.634.076-1.895-.447-1.472-.61-2.435-2.097-2.511-2.198-.076-.101-.606-.807-.606-1.539 0-.732.383-1.093.519-1.242.136-.149.298-.186.398-.186.1 0 .199.002.285.006.091.004.213-.034.333.254.125.298.427 1.042.464 1.118.038.076.063.165.013.266-.05.101-.076.165-.152.253-.076.089-.16.198-.228.266-.076.076-.156.159-.067.311.089.152.396.654.851 1.059.585.521 1.079.683 1.231.759.152.076.241.063.33-.038.089-.101.38-.442.481-.594.101-.152.203-.127.342-.076.139.051.884.417 1.036.493.152.076.253.114.291.177.038.064.038.368-.106.773z"/></svg>
+                  <span>Chat</span>
                 </a>
-              </div>
-            </div>
 
-            <!-- Items Box -->
-            <div class="bg-obsidian-900/60 rounded-xl p-2.5 text-xs text-gray-300 border border-gray-800/60 mb-2.5">
-              <span class="text-gray-500 text-[10px] uppercase font-bold tracking-wider block mb-0.5">Items</span>
-              <p class="line-clamp-2">${itemsSummary}</p>
-            </div>
-
-            <!-- Address & Total -->
-            <div class="flex items-center justify-between text-xs text-gray-300 mb-3">
-              <div class="flex items-center gap-1 text-gray-400 max-w-[65%] truncate">
-                <span>📍</span>
-                <span class="truncate">${addressText}</span>
+                <button 
+                  onclick="openOrderModal('${orderId}')"
+                  class="px-2.5 py-1 rounded-lg bg-obsidian-700 hover:bg-obsidian-600 text-gold-400 hover:text-gold-300 border border-gray-700 text-[11px] transition-colors"
+                >
+                  Slip
+                </button>
               </div>
-              <div class="text-right">
-                <span class="text-xs text-gray-400">Total: </span>
-                <span class="font-serif font-bold text-white text-sm">${fmt(order.total || order.sub)}</span>
-              </div>
-            </div>
 
-            <!-- Bottom Action Buttons (Quick Status updates) -->
-            <div class="pt-2 border-t border-gray-800/80 flex items-center justify-between gap-1.5">
-              <div class="flex items-center gap-1.5 overflow-x-auto hide-scrollbar">
-                ${order.status !== 'paid' ? `
+              <!-- Status Action Pills -->
+              <div class="flex items-center gap-1 overflow-x-auto hide-scrollbar">
+                ${order.status !== "paid" ? `
                   <button 
                     onclick="updateOrderStatus('${orderId}', 'paid')" 
-                    class="px-2.5 py-1 bg-emerald-950/70 hover:bg-emerald-900 border border-emerald-500/30 text-emerald-300 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+                    class="px-2 py-1 rounded bg-emerald-950/60 hover:bg-emerald-800 text-emerald-300 border border-emerald-500/40 text-[10px] font-semibold transition-all active:scale-95"
+                    title="Mark Rs 200 Advance as Paid"
                   >
                     ✓ Adv Paid (200)
                   </button>
-                ` : ''}
+                ` : ""}
 
-                ${order.status !== 'dispatched' ? `
+                ${order.status !== "dispatched" ? `
                   <button 
                     onclick="updateOrderStatus('${orderId}', 'dispatched')" 
-                    class="px-2.5 py-1 bg-purple-950/70 hover:bg-purple-900 border border-purple-500/30 text-purple-300 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+                    class="px-2 py-1 rounded bg-purple-950/60 hover:bg-purple-800 text-purple-300 border border-purple-500/40 text-[10px] font-semibold transition-all active:scale-95"
+                    title="Mark Dispatched to Courier"
                   >
                     🚚 Dispatch
                   </button>
-                ` : ''}
+                ` : ""}
 
-                ${order.status === 'dispatched' ? `
+                ${order.status !== "delivered" ? `
                   <button 
                     onclick="updateOrderStatus('${orderId}', 'delivered')" 
-                    class="px-2.5 py-1 bg-cyan-950/70 hover:bg-cyan-900 border border-cyan-500/30 text-cyan-300 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
+                    class="px-2 py-1 rounded bg-cyan-950/60 hover:bg-cyan-800 text-cyan-300 border border-cyan-500/40 text-[10px] font-semibold transition-all active:scale-95"
+                    title="Mark Parcel Delivered"
                   >
                     📦 Delivered
                   </button>
-                ` : ''}
-              </div>
+                ` : ""}
 
-              <button 
-                onclick="openOrderModal('${orderId}')" 
-                class="px-2.5 py-1 bg-obsidian-700 hover:bg-obsidian-600 border gold-border text-gold-400 rounded-lg text-[11px] font-semibold whitespace-nowrap active:scale-95 transition-all"
-              >
-                Details & Slip ➔
-              </button>
+                ${order.status !== "cancelled" ? `
+                  <button 
+                    onclick="updateOrderStatus('${orderId}', 'cancelled')" 
+                    class="px-1.5 py-1 rounded bg-red-950/40 hover:bg-red-900 text-red-400 border border-red-500/30 text-[10px] transition-all"
+                    title="Cancel Order"
+                  >
+                    ✕
+                  </button>
+                ` : ""}
+              </div>
             </div>
           </div>
         `;
       }).join("");
     }
 
-    // Update Status Action
+    // ==================== UPDATE STATUS ====================
     async function updateOrderStatus(orderId, newStatus) {
       if (!token) return;
+      unlockAudioContext();
       try {
         const res = await fetch(`${API_BASE}/api/v1/owner/orders/${encodeURIComponent(orderId)}/status`, {
           method: "PATCH",
@@ -944,124 +1223,143 @@
             "Content-Type": "application/json",
             "Authorization": `Bearer ${token}`
           },
-          body: JSON.stringify({ status: newStatus })
+          body: JSON.stringify({
+            status: newStatus,
+            note: `Status updated to ${newStatus} via Owner Android Portal`
+          })
         });
+
         const data = await res.json();
         if (res.ok && data.success) {
-          showToast("Status Updated", `Order #${orderId} marked as ${newStatus}`, "✓");
-          fetchOrders(true);
-          if (activeModalOrder && activeModalOrder.order_id === orderId) {
-            closeOrderModal();
+          showToast("Status Updated", `Order #${orderId} marked as ${newStatus}`, "✅");
+          const idx = cachedOrders.findIndex(o => o.order_id === orderId);
+          if (idx !== -1) {
+            cachedOrders[idx].status = newStatus;
+            recalculateCountsFromCache();
+            renderOrders();
+            if (activeModalOrder && activeModalOrder.order_id === orderId) {
+              openOrderModal(orderId);
+            }
           }
         } else {
-          alert(data.error || "Could not update status");
+          showToast("Update Failed", data.error || "Could not update status", "❌");
         }
       } catch (err) {
-        alert("Failed to connect to server");
+        showToast("Error", "Network connection failed", "❌");
       }
     }
 
-    // Modal Details Opener
+    // ==================== ORDER MODAL & PACKING SLIP ====================
     function openOrderModal(orderId) {
-      const order = cachedOrders.find(o => o.order_id === orderId || o.id === orderId);
+      const order = cachedOrders.find(o => o.order_id === orderId);
       if (!order) return;
       activeModalOrder = order;
 
-      const cleanPhone = String(order.customer_phone || "").replace(/[^0-9]/g, '');
-      const itemsListEl = document.getElementById("modal-items-list");
-      const addressText = [order.address, order.city].filter(Boolean).join(', ') || order.city || 'Karachi';
+      const cleanPhone = (order.customer_phone || "").replace(/[^0-9]/g, "");
+      const waPhone = cleanPhone.startsWith("0") ? "92" + cleanPhone.slice(1) : cleanPhone;
 
-      document.getElementById("modal-order-id").textContent = "#" + (order.order_id || order.id);
-      document.getElementById("modal-status-badge").innerHTML = getStatusBadge(order.status);
-      document.getElementById("modal-order-time").textContent = new Date(order.created_at || order.date || Date.now()).toLocaleString();
-      document.getElementById("modal-customer-name").textContent = order.customer_name || 'Customer';
-      document.getElementById("modal-customer-phone").textContent = "+" + cleanPhone;
+      document.getElementById("modal-order-id").textContent = `#${order.order_id}`;
+      document.getElementById("modal-order-time").textContent = order.created_at ? new Date(order.created_at).toLocaleString() : "";
+      
+      const badge = document.getElementById("modal-status-badge");
+      badge.textContent = (order.status || "sent").toUpperCase();
+      badge.className = "ml-2 px-2 py-0.5 rounded text-[10px] font-semibold bg-gold-500/20 text-gold-400 border gold-border";
+
+      document.getElementById("modal-customer-name").textContent = order.customer_name || "Customer";
+      document.getElementById("modal-customer-phone").textContent = order.customer_phone || "N/A";
+      document.getElementById("modal-customer-city").textContent = order.city || "Pakistan";
+      document.getElementById("modal-customer-address").textContent = order.address || "N/A";
+      document.getElementById("modal-customer-notes").textContent = order.notes ? `Note: ${order.notes}` : "";
+
+      document.getElementById("modal-total").textContent = fmt(order.total);
+      document.getElementById("modal-adv").textContent = order.status === "paid" ? "Rs 200 (Received)" : "Rs 200 (Pending)";
+      const balance = Math.max(0, (Number(order.total) || 0) - (order.status === "paid" ? 200 : 0));
+      document.getElementById("modal-balance").textContent = fmt(balance);
+
       document.getElementById("modal-call-btn").href = `tel:${cleanPhone}`;
-      document.getElementById("modal-wa-btn").href = `https://wa.me/${cleanPhone}`;
-      document.getElementById("modal-address").textContent = addressText;
-      document.getElementById("modal-total-amount").textContent = fmt(order.total || order.sub);
-      document.getElementById("modal-payment-method").textContent = (order.payment_method || "Cash on Delivery") + " (COD)";
+      document.getElementById("modal-wa-btn").href = `https://wa.me/${waPhone}?text=${encodeURIComponent(`Assalam-o-Alaikum ${order.customer_name}! Taj Leathers se aapke order #${order.order_id} ke hawalay se rabta kar rahe hain.`)}`;
 
-      // Notes
-      const noteBox = document.getElementById("modal-note-box");
-      if (order.notes) {
-        document.getElementById("modal-notes").textContent = order.notes;
-        noteBox.classList.remove("hidden");
+      const itemsEl = document.getElementById("modal-items-list");
+      if (Array.isArray(order.items) && order.items.length > 0) {
+        itemsEl.innerHTML = order.items.map(i => `
+          <div class="flex items-center justify-between py-1 border-b border-gray-800/40 text-xs">
+            <div>
+              <span class="font-medium text-white">${i.name}</span>
+              ${i.variant ? `<span class="text-gray-400 text-[10px]"> (${i.variant})</span>` : ""}
+              <span class="text-gray-500 text-[10px]"> x${i.qty || 1}</span>
+            </div>
+            <span class="font-mono text-gold-400">${fmt((Number(i.price) || 0) * (Number(i.qty) || 1))}</span>
+          </div>
+        `).join("");
       } else {
-        noteBox.classList.add("hidden");
+        itemsEl.innerHTML = `<div class="text-gray-500 text-xs py-1">Handcrafted Leather Product</div>`;
       }
-
-      // Items
-      itemsListEl.innerHTML = (order.items || []).map(i => `
-        <div class="flex justify-between items-center py-1 border-b border-gray-800/60">
-          <div>
-            <p class="font-bold text-white text-xs">${i.name}</p>
-            ${i.variant ? `<p class="text-[10px] text-gray-400">${i.variant}</p>` : ''}
-          </div>
-          <div class="text-right font-mono">
-            <span>x${i.qty || 1}</span> · <span class="text-gold-400">${fmt((i.price || 0) * (i.qty || 1))}</span>
-          </div>
-        </div>
-      `).join("");
-
-      // Status buttons inside modal
-      document.querySelectorAll(".status-action-btn").forEach(btn => {
-        btn.onclick = () => updateOrderStatus(order.order_id || order.id, btn.dataset.status);
-      });
 
       document.getElementById("order-modal").classList.remove("hidden");
     }
 
-    function closeOrderModal() {
+    document.getElementById("modal-close-btn").addEventListener("click", () => {
       document.getElementById("order-modal").classList.add("hidden");
       activeModalOrder = null;
-    }
-
-    document.getElementById("modal-close-btn")?.addEventListener("click", closeOrderModal);
-    document.getElementById("modal-done-btn")?.addEventListener("click", closeOrderModal);
-
-    // Print Courier Packing Slip
-    document.getElementById("modal-print-btn")?.addEventListener("click", () => {
-      if (!activeModalOrder) return;
-      const o = activeModalOrder;
-      const cleanPhone = String(o.customer_phone || "").replace(/[^0-9]/g, '');
-      const printArea = document.getElementById("print-area");
-      
-      printArea.innerHTML = `
-        <div style="font-family: sans-serif; padding: 20px; border: 2px dashed #000; max-width: 500px; margin: 0 auto;">
-          <h2 style="margin: 0; text-align: center; font-size: 20px;">TAJ LEATHERS</h2>
-          <p style="margin: 2px 0 15px; text-align: center; font-size: 11px; text-transform: uppercase;">Handcrafted Pure Leather Goods · Karachi, Pakistan</p>
-          <hr style="border: 0; border-top: 1px solid #000; margin-bottom: 12px;" />
-          
-          <table style="width: 100%; font-size: 13px; line-height: 1.6;">
-            <tr><td><strong>Order ID:</strong></td><td>#${o.order_id || o.id}</td></tr>
-            <tr><td><strong>Date:</strong></td><td>${new Date(o.created_at || Date.now()).toLocaleDateString()}</td></tr>
-            <tr><td><strong>Customer:</strong></td><td><strong>${o.customer_name}</strong></td></tr>
-            <tr><td><strong>Phone:</strong></td><td>+${cleanPhone}</td></tr>
-            <tr><td><strong>Address:</strong></td><td>${[o.address, o.city].filter(Boolean).join(', ')}</td></tr>
-            ${o.notes ? `<tr><td><strong>Instructions:</strong></td><td>${o.notes}</td></tr>` : ''}
-          </table>
-
-          <hr style="border: 0; border-top: 1px solid #000; margin: 12px 0;" />
-          <h4 style="margin: 0 0 6px; font-size: 13px;">Items in Package:</h4>
-          <ul style="margin: 0; padding-left: 20px; font-size: 12px;">
-            ${(o.items || []).map(i => `<li>${i.qty}x ${i.name} ${i.variant ? '(' + i.variant + ')' : ''}</li>`).join('')}
-          </ul>
-
-          <hr style="border: 0; border-top: 1px solid #000; margin: 12px 0;" />
-          <table style="width: 100%; font-size: 14px;">
-            <tr>
-              <td><strong>TOTAL CASH ON DELIVERY:</strong></td>
-              <td style="text-align: right; font-size: 16px;"><strong>Rs ${Number(o.total || 0).toLocaleString()}</strong></td>
-            </tr>
-          </table>
-          <p style="margin-top: 20px; font-size: 10px; text-align: center; color: #555;">Thank you for shopping handcrafted elegance with Taj Leathers!</p>
-        </div>
-      `;
-      window.print();
     });
 
-    // Check WhatsApp Server Status
+    document.getElementById("copy-address-btn").addEventListener("click", () => {
+      if (!activeModalOrder) return;
+      const fullText = `${activeModalOrder.customer_name}\n${activeModalOrder.customer_phone}\n${activeModalOrder.address || ''}, ${activeModalOrder.city || ''}`;
+      navigator.clipboard.writeText(fullText).then(() => {
+        showToast("Copied!", "Customer address copied to clipboard", "📋");
+      }).catch(() => {
+        showToast("Error", "Could not access clipboard", "❌");
+      });
+    });
+
+    // Print Courier Slip
+    document.getElementById("modal-print-btn").addEventListener("click", () => {
+      if (!activeModalOrder) return;
+      const o = activeModalOrder;
+      const balance = Math.max(0, (Number(o.total) || 0) - (o.status === "paid" ? 200 : 0));
+      const itemsList = Array.isArray(o.items) ? o.items.map(i => `${i.qty || 1}x ${i.name}`).join(", ") : "Handcrafted Product";
+
+      const printArea = document.getElementById("print-area");
+      printArea.innerHTML = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; border: 2px dashed #000; max-width: 400px; margin: 0 auto; color: #000;">
+          <div style="text-align: center; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 12px;">
+            <h2 style="margin: 0; font-size: 20px; text-transform: uppercase;">TAJ LEATHERS</h2>
+            <p style="margin: 2px 0 0 0; font-size: 11px;">Luxury Handcrafted Leather Goods • Karachi</p>
+            <p style="margin: 2px 0 0 0; font-size: 11px; font-weight: bold;">WhatsApp: +92 333 2324633</p>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px;">
+            <span><strong>ORDER:</strong> #${o.order_id}</span>
+            <span><strong>DATE:</strong> ${new Date().toLocaleDateString()}</span>
+          </div>
+
+          <div style="background: #f0f0f0; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px;">
+            <p style="margin: 0 0 4px 0; font-size: 14px;"><strong>TO: ${o.customer_name || 'Customer'}</strong></p>
+            <p style="margin: 0 0 4px 0; font-size: 13px;"><strong>PHONE: ${o.customer_phone}</strong></p>
+            <p style="margin: 0 0 4px 0;"><strong>CITY:</strong> ${o.city || 'Pakistan'}</p>
+            <p style="margin: 0;"><strong>ADDRESS:</strong> ${o.address || 'N/A'}</p>
+          </div>
+
+          <div style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; padding: 8px 0; margin-bottom: 12px; font-size: 12px;">
+            <p style="margin: 0 0 4px 0;"><strong>PARCEL CONTENTS:</strong></p>
+            <p style="margin: 0;">${itemsList}</p>
+          </div>
+
+          <div style="border: 2px solid #000; padding: 10px; text-align: center; background: #ffffd0;">
+            <p style="margin: 0 0 2px 0; font-size: 12px; text-transform: uppercase;"><strong>CASH ON DELIVERY (COD)</strong></p>
+            <p style="margin: 0; font-size: 22px; font-weight: bold;">Rs ${balance.toLocaleString()}</p>
+            <p style="margin: 2px 0 0 0; font-size: 10px; color: #444;">Advance Rs 200 Adjusted</p>
+          </div>
+        </div>
+      `;
+
+      printArea.classList.remove("hidden");
+      window.print();
+      setTimeout(() => printArea.classList.add("hidden"), 1000);
+    });
+
+    // ==================== LIVE WHATSAPP HEALTH ====================
     async function fetchWhatsAppStatus() {
       if (!token) return;
       try {
@@ -1069,24 +1367,28 @@
           headers: { "Authorization": `Bearer ${token}` }
         });
         const data = await res.json();
-        const indicator = document.getElementById("wa-indicator");
-        const text = document.getElementById("wa-status-text");
+        
+        const pill = document.getElementById("wa-status-pill");
+        const ind = document.getElementById("wa-indicator");
+        const txt = document.getElementById("wa-status-text");
 
         if (data.success && data.connected) {
-          indicator.className = "w-2 h-2 rounded-full bg-emerald-500 inline-block pulse-dot";
-          text.textContent = `WhatsApp Online (${data.phone || '+92 314 8253657'})`;
-          text.className = "text-emerald-400 font-medium";
+          ind.className = "w-2 h-2 rounded-full bg-emerald-400 inline-block";
+          txt.textContent = "WhatsApp Online";
+          txt.className = "text-emerald-400 font-semibold";
+          pill.title = "WhatsApp Socket Connected";
         } else {
-          indicator.className = "w-2 h-2 rounded-full bg-red-500 inline-block";
-          text.textContent = "WhatsApp Offline (Orders Safe in Database)";
-          text.className = "text-red-400 font-medium";
+          ind.className = "w-2 h-2 rounded-full bg-red-500 inline-block animate-ping";
+          txt.textContent = "WhatsApp Offline (Safe in DB)";
+          txt.className = "text-red-400 font-semibold";
+          pill.title = "WhatsApp disconnected, but all orders are 100% saved in database!";
         }
       } catch (e) {
-        document.getElementById("wa-status-text").textContent = "Checking connection...";
+        // quiet error
       }
     }
 
-    // Start
+    // Kickoff on load
     init();
   </script>
 </body>

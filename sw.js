@@ -1,5 +1,5 @@
-// Taj Leathers Orders App - Service Worker for Android PWA Installability
-const CACHE_NAME = 'taj-orders-v1';
+// Taj Leathers Orders App - Service Worker for Android PWA Installability & Notifications
+const CACHE_NAME = 'taj-orders-v2';
 const ASSETS_TO_CACHE = [
   './admin.html',
   './manifest.json',
@@ -28,11 +28,32 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Always fetch live API requests over the network
-  if (event.request.url.includes('/api/')) {
+  // Always fetch live API and WebSocket requests over the network
+  if (event.request.url.includes('/api/') || event.request.url.includes('bot.automatixes.com')) {
     return;
   }
   event.respondWith(
     fetch(event.request).catch(() => caches.match(event.request))
+  );
+});
+
+// Handle notification click on Android / Desktop
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = (event.notification.data && event.notification.data.url) 
+    ? event.notification.data.url 
+    : './admin.html';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (let client of windowClients) {
+        if (client.url.includes('admin.html') && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
   );
 });
