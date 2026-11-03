@@ -548,15 +548,17 @@ function forwardOrderToApi(order) {
     const itemsList = (order.items || []).map(it => `${it.qty || 1}x ${it.name}${it.variant ? ' (' + it.variant + ')' : ''}`).join(', ');
     const addressText = [order.addr, order.city].filter(Boolean).join(', ');
 
-    // 100% Configurable Roman Urdu Confirmation Template with Advance 200 Easypaisa
+    // Human-style Order Confirmation Request Template
     const romanUrduMessage =
-      `Bohat shukriya ${order.name || 'Customer'}! Aapka order #${orderId} confirm ho gaya hai. 🎉\n\n` +
-      `Order confirm karke dispatch karne ke liye advance 200 send krden yh num hai:\n\n` +
-      `Account No: 03332324633\n` +
-      `Account Name: Irfan Taj\n` +
-      `easypaisa\n\n` +
-      `Advance payment (Rs 200) send karne ke baad screenshot yahan WhatsApp par share kar dein taake aapka order pack karke rawana kar diya jaye. Baqi raqam Cash on Delivery (COD) par rider ko ada karni hogi.\n\n` +
-      `Shukriya! — Taj leather`;
+      `Assalam-o-Alaikum ${order.name || 'Customer'}! 😊\n\n` +
+      `Taj Leathers se baat kar raha hoon. Website par aapka order receive ho gaya hai:\n\n` +
+      `📦 *Order ID:* #${orderId}\n` +
+      `🛍️ *Items:* ${itemsList || 'Handcrafted Leather Product'}\n` +
+      `💰 *Total Amount:* Rs ${Number(totalAmount).toLocaleString()} (Cash on Delivery)\n` +
+      (addressText ? `📍 *Delivery Address:* ${addressText}\n` : '') +
+      `\nKya main aapka yeh order dispatch ke liye confirm kar doon?\n` +
+      `Bas ek baar *YES* ya *Confirm* likh kar reply kar dein taake hum aaj hi aapka parcel pack karke rawana kar dein.\n\n` +
+      `Shukriya! 🙏`;
 
     const payloadItems = (order.items && order.items.length > 0)
       ? order.items.map(it => ({
