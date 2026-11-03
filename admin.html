@@ -379,7 +379,12 @@
             <span id="modal-customer-phone" class="text-gray-300 font-mono text-xs ml-auto"></span>
           </div>
           <div class="pt-2 border-t border-gray-700/50">
-            <span class="text-gray-400">Delivery Address:</span>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-400">Delivery Address:</span>
+              <button id="copy-address-btn" type="button" class="text-[11px] text-gold-400 hover:text-gold-300 font-semibold flex items-center gap-1 active:scale-95">
+                <span>📋</span> Copy
+              </button>
+            </div>
             <p id="modal-address" class="text-gray-200 font-medium mt-0.5"></p>
           </div>
         </div>
@@ -1267,14 +1272,20 @@
 
       document.getElementById("modal-customer-name").textContent = order.customer_name || "Customer";
       document.getElementById("modal-customer-phone").textContent = order.customer_phone || "N/A";
-      document.getElementById("modal-customer-city").textContent = order.city || "Pakistan";
-      document.getElementById("modal-customer-address").textContent = order.address || "N/A";
-      document.getElementById("modal-customer-notes").textContent = order.notes ? `Note: ${order.notes}` : "";
+      const addrEl = document.getElementById("modal-address");
+      if (addrEl) addrEl.textContent = `${order.address || "N/A"}${order.city ? ', ' + order.city : ''}`;
 
-      document.getElementById("modal-total").textContent = fmt(order.total);
-      document.getElementById("modal-adv").textContent = order.status === "paid" ? "Rs 200 (Received)" : "Rs 200 (Pending)";
-      const balance = Math.max(0, (Number(order.total) || 0) - (order.status === "paid" ? 200 : 0));
-      document.getElementById("modal-balance").textContent = fmt(balance);
+      const notesEl = document.getElementById("modal-notes");
+      const noteBox = document.getElementById("modal-note-box");
+      if (order.notes) {
+        if (notesEl) notesEl.textContent = order.notes;
+        if (noteBox) noteBox.classList.remove("hidden");
+      } else if (noteBox) {
+        noteBox.classList.add("hidden");
+      }
+
+      const totalEl = document.getElementById("modal-total-amount");
+      if (totalEl) totalEl.textContent = fmt(order.total);
 
       document.getElementById("modal-call-btn").href = `tel:${cleanPhone}`;
       document.getElementById("modal-wa-btn").href = `https://wa.me/${waPhone}?text=${encodeURIComponent(`Assalam-o-Alaikum ${order.customer_name}! Taj Leathers se aapke order #${order.order_id} ke hawalay se rabta kar rahe hain.`)}`;
