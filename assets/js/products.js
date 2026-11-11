@@ -79,6 +79,13 @@ const LEATHER_PRODUCTS = [
     badge: "-15%",
     desc: "Genuine cow leather with a bold crocodile emboss. Slim in the pocket, roomy where it counts — cards, notes, and nothing extra.",
     details: ["Genuine cow leather with crocodile emboss", "Multiple card slots + note compartment", "Hand-stitched edges", "Classic slim bifold profile"] },
+  { id: "wallet-croc-slim", name: "Slim Crocodile Wallet", cat: "wallets",
+    price: 1400, oldPrice: 1800, img: "light/wallet-slim-croc-box.webp",
+    gallery: ["light/wallet-slim-croc-box.webp","light/wallet-slim-croc-front.webp","light/wallet-slim-croc-open.webp"],
+    colors: ["Black"], sizes: ["Standard"],
+    badge: "-22%",
+    desc: "Slim genuine cow leather wallet with distinctive crocodile embossed texture. Compact vertical bifold profile with multiple card slots and dual mini SIM pockets.",
+    details: ["100% genuine cow leather with crocodile emboss", "Multiple card slots + dual mini SIM card pockets", "Cash and note compartment", "Ultra-slim compact vertical bifold design", "Hand-stitched perimeter edges"] },
 ];
 
 
