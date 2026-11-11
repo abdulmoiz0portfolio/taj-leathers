@@ -161,7 +161,7 @@ function paint() {
       </div>
       <div class="border-t border-black/10">
         ${acc("Details & Materials", "<ul class='list-disc pl-5 space-y-1.5'>" + p.details.map(d => `<li>${d}</li>`).join("") + "</ul>")}
-        ${acc("Shipping & Delivery", "<strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ". On orders below " + fmt(FREE_SHIP_THRESHOLD) + ", delivery charges are Rs 200. If your order is not delivered in Karachi within 48 hours, your entire shopping is FREE.")}
+        ${acc("Shipping & Delivery", "<strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ". On orders below " + fmt(FREE_SHIP_THRESHOLD) + ", delivery charges are Rs 200.<br><strong class='text-[#1a1a1a]'>Karachi Only:</strong> If your order is not delivered within 48 hours, your entire shopping is FREE (offer valid for Karachi only).")}
         ${false
           ? acc("Easy Exchange", "Unstitched cutting not quite right? Exchange it within 7 days — unused and in original condition. We want you to love what your tailor makes.")
           : acc("Lifetime Warranty", "If the stitching, buckle or hardware ever fails under normal use, we repair or replace it free — for life. 7-day easy exchange for unused items.")}
@@ -332,10 +332,10 @@ function paintMobile() {
     ${p.colors.length > 1 ? `<div class="opt"><label>Color: <b>${selColor}</b></label><div class="sw">${mOptBtn(p.colors, selColor, "setColor")}</div></div>` : ""}
     <div class="opt"><label>Size: <b>${selSize}</b></label><div class="sw">${mOptBtn(p.sizes, selSize, "setSize")}</div></div>
     <div class="opt"><label>Quantity</label><div class="qty"><button onclick="chQty(-1)" aria-label="Decrease">−</button><span>${qty}</span><button onclick="chQty(1)" aria-label="Increase">+</button></div></div>
-    <div class="g48"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span>If your order isn’t delivered in Karachi within 48 hours, your entire shopping is FREE.</span></div>
+    <div class="g48"><svg viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 9h4l3 3v4h-7"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg><span><strong>Karachi Only:</strong> If your order isn’t delivered within 48 hours, your entire shopping is FREE.</span></div>
     <div class="acc">
       ${acc("Details & Materials", "<ul class='list-disc pl-5 space-y-1.5'>" + p.details.map(d => `<li>${d}</li>`).join("") + "</ul>")}
-      ${acc("Shipping & Delivery", "<strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ". On orders below " + fmt(FREE_SHIP_THRESHOLD) + ", delivery charges are Rs 200. If your order is not delivered in Karachi within 48 hours, your entire shopping is FREE.")}
+      ${acc("Shipping & Delivery", "<strong class='text-[#1a1a1a]'>FREE delivery</strong> on orders over " + fmt(FREE_SHIP_THRESHOLD) + ". On orders below " + fmt(FREE_SHIP_THRESHOLD) + ", delivery charges are Rs 200.<br><strong class='text-[#1a1a1a]'>Karachi Only:</strong> If your order is not delivered within 48 hours, your entire shopping is FREE (offer valid for Karachi only).")}
       ${acc("Lifetime Warranty", "If the stitching, buckle or hardware ever fails under normal use, we repair or replace it free — for life. 7-day easy exchange for unused items.")}
     </div>
   </div>
