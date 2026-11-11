@@ -93,6 +93,20 @@ const LEATHER_PRODUCTS = [
     badge: "-25%",
     desc: "Ultra-slim vertical bifold wallet handcrafted from smooth genuine leather. Minimalist silhouette featuring multi-card capacity and dual mini SIM card pockets.",
     details: ["100% genuine smooth leather", "Multiple card slots + dual mini SIM card pockets", "Full-length cash and note compartment", "Ultra-slim compact vertical bifold profile", "Hand-stitched perimeter edges"] },
+  { id: "wallet-bifold-gold-clip", name: "Bifold Gold Clip Wallet", cat: "wallets",
+    price: 1800, oldPrice: 2200, img: "light/wallet-bifold-gold-clip.webp",
+    gallery: ["light/wallet-bifold-gold-clip.webp"],
+    colors: ["Brown"], sizes: ["Standard"],
+    badge: "-18%",
+    desc: "Luxury handcrafted bifold wallet featuring an interior gold money clip and external zipper coin pocket. Made from genuine smooth leather, packaged in signature Taj Leather presentation box.",
+    details: ["100% genuine smooth leather", "Integrated gold-toned interior money clip", "External zipper pocket for coins or cards", "Multi-slot bifold layout", "Signature Taj Leather gift box included"] },
+  { id: "wallet-croc-gold-clip", name: "Crocodile Gold Clip Wallet", cat: "wallets",
+    price: 2000, oldPrice: 2500, img: "light/wallet-croc-gold-clip.webp",
+    gallery: ["light/wallet-croc-gold-clip.webp"],
+    colors: ["Black"], sizes: ["Standard"],
+    badge: "-20%",
+    desc: "Exotic crocodile-embossed genuine leather wallet featuring an interior gold money clip and front zipper compartment. Built for executive styling, presented in luxury Taj Leather gift box.",
+    details: ["100% genuine leather with crocodile emboss", "Integrated gold-toned interior money clip", "External zipper pocket for quick access", "Slim multi-compartment bifold profile", "Signature Taj Leather gift box included"] },
 ];
 
 
