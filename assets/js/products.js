@@ -86,6 +86,13 @@ const LEATHER_PRODUCTS = [
     badge: "-22%",
     desc: "Slim genuine cow leather wallet with distinctive crocodile embossed texture. Compact vertical bifold profile with multiple card slots and dual mini SIM pockets.",
     details: ["100% genuine cow leather with crocodile emboss", "Multiple card slots + dual mini SIM card pockets", "Cash and note compartment", "Ultra-slim compact vertical bifold design", "Hand-stitched perimeter edges"] },
+  { id: "wallet-slim-bifold", name: "Slim Bifold Wallet", cat: "wallets",
+    price: 1200, oldPrice: 1600, img: "light/wallet-slim-bifold-box.webp",
+    gallery: ["light/wallet-slim-bifold-box.webp","light/wallet-slim-bifold-front.webp","light/wallet-slim-bifold-open.webp"],
+    colors: ["Brown"], sizes: ["Standard"],
+    badge: "-25%",
+    desc: "Ultra-slim vertical bifold wallet handcrafted from smooth genuine leather. Minimalist silhouette featuring multi-card capacity and dual mini SIM card pockets.",
+    details: ["100% genuine smooth leather", "Multiple card slots + dual mini SIM card pockets", "Full-length cash and note compartment", "Ultra-slim compact vertical bifold profile", "Hand-stitched perimeter edges"] },
 ];
 
 
