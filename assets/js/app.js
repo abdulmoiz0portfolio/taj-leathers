@@ -97,7 +97,7 @@
         <div>
           <div class="flex gap-2">
             <input id="drawer-promo" type="text" placeholder="Promo code (try WELCOME10)" class="flex-1 min-w-0 bg-white border border-black/10 rounded-full px-4 py-2.5 text-sm focus:outline-none focus:border-[#D4AF37] uppercase">
-            <button onclick="applyDrawerPromo()" class="bg-[#000000] text-black text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-[#D4AF37] transition">Apply</button>
+            <button onclick="applyDrawerPromo()" class="bg-[#D4AF37] text-black text-sm font-bold px-5 py-2.5 rounded-full hover:bg-[#B8860B] transition">Apply</button>
           </div>
           <p id="drawer-promo-msg" class="promo-msg"></p>
         </div>
