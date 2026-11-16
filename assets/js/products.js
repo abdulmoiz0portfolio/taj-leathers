@@ -102,7 +102,7 @@ const LEATHER_PRODUCTS = [
     details: ["100% genuine smooth leather", "Integrated gold-toned interior money clip", "External zipper pocket for coins or cards", "Multi-slot bifold layout", "Signature Taj Leather gift box included"] },
   { id: "wallet-croc-gold-clip", name: "Crocodile Gold Clip Wallet", cat: "wallets",
     price: 2000, oldPrice: 2500, img: "light/wallet-croc-gold-clip.webp",
-    gallery: ["light/wallet-croc-gold-clip.webp"],
+    gallery: ["light/wallet-croc-gold-clip.webp","light/wallet-croc-gold-clip-mechanism.webp","light/wallet-croc-gold-clip-open.webp"],
     colors: ["Black"], sizes: ["Standard"],
     badge: "-20%",
     desc: "Exotic crocodile-embossed genuine leather wallet featuring an interior gold money clip and front zipper compartment. Built for executive styling, presented in luxury Taj Leather gift box.",
