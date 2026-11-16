@@ -95,7 +95,7 @@ const LEATHER_PRODUCTS = [
     details: ["100% genuine smooth leather", "Multiple card slots + dual mini SIM card pockets", "Full-length cash and note compartment", "Ultra-slim compact vertical bifold profile", "Hand-stitched perimeter edges"] },
   { id: "wallet-bifold-gold-clip", name: "Bifold Gold Clip Wallet", cat: "wallets",
     price: 1800, oldPrice: 2200, img: "light/wallet-bifold-gold-clip.webp",
-    gallery: ["light/wallet-bifold-gold-clip.webp"],
+    gallery: ["light/wallet-bifold-gold-clip.webp","light/wallet-bifold-gold-clip-open.webp","light/wallet-bifold-gold-clip-mechanism.webp"],
     colors: ["Brown"], sizes: ["Standard"],
     badge: "-18%",
     desc: "Luxury handcrafted bifold wallet featuring an interior gold money clip and external zipper coin pocket. Made from genuine smooth leather, packaged in signature Taj Leather presentation box.",
